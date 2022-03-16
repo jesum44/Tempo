@@ -80,8 +80,9 @@ class ARView: UIViewController {
             let image = UIImage(systemName: "eye")!
             let annotationNode = LocationAnnotationNode(location: location, image: image)
             sceneLocationView.addLocationNodeWithConfirmedLocation(locationNode: annotationNode)
-            view.addSubview(sceneLocationView)
+            //view.addSubview(sceneLocationView)
         }
+        view.addSubview(sceneLocationView)
 
     }
     
