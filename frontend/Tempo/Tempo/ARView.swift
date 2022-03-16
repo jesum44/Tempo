@@ -16,22 +16,36 @@ class ARView: UIViewController {
         super.viewDidLoad()
 
         sceneLocationView.run()
-        let coordinate = CLLocationCoordinate2D(latitude: 42.27165, longitude: 83.74038)
-        let location = CLLocation(coordinate: coordinate, altitude: 300)
-        let image = UIImage(systemName: "eye")!
+       
+        getNearbyEvents(nil)
+    
 
-        let annotationNode = LocationAnnotationNode(location: location, image: image)
+       
         
 //        annotationNode.scaleRelativeToDistance = true
 
-        sceneLocationView.addLocationNodeWithConfirmedLocation(locationNode: annotationNode)
-        
-        
-        
-        view.addSubview(sceneLocationView)
+       
+
         
         
 
+    }
+    
+    private func getNearbyEvents(_ sender: UIAction?) {
+        
+        // Make a call to eventStore.shared.getEvents
+        // That call will populate the events array with all the relevent data
+        // Once the data is supplied, grab the longitude and latitude off the data and use it here to display the AR pins
+        let locationArray = [(lat: 42.2768206, longi: 83.745065), (lat: 47.2768209, longi: 83.745065)]
+        
+        for (lat, longit) in locationArray {
+            let coordinate = CLLocationCoordinate2D(latitude: lat, longitude: longit)
+            let location = CLLocation(coordinate: coordinate, altitude: 300)
+            let image = UIImage(systemName: "eye")!
+            let annotationNode = LocationAnnotationNode(location: location, image: image)
+            sceneLocationView.addLocationNodeWithConfirmedLocation(locationNode: annotationNode)
+            view.addSubview(sceneLocationView)
+        }
     }
 
     override func viewDidLayoutSubviews() {
