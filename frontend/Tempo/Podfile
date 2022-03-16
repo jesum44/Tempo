@@ -6,6 +6,14 @@ target 'Tempo' do
   use_frameworks!
 
   # Pods for Tempo
+
+  # AR stuff
   pod 'ARCL'
+  
+  # HTTP requests
+  # pod 'Alamofire', '~> 5.5'
+
+  # easier JSON handling
+  pod 'SwiftyJSON', '~> 4.0'
 
 end

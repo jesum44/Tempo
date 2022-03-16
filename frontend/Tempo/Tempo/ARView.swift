@@ -8,6 +8,7 @@
 import Foundation
 import ARCL
 import CoreLocation
+import UIKit
 
 class ARView: UIViewController {
     var sceneLocationView = SceneLocationView()
@@ -23,11 +24,25 @@ class ARView: UIViewController {
        
         
 //        annotationNode.scaleRelativeToDistance = true
-
-       
-
         
         
+        
+        //******** CreateEvent Code Below:
+
+        // add "+" button to create an event
+        let frame = self.view.safeAreaLayoutGuide.layoutFrame
+        let button = UIButton(frame: CGRect(
+            x: frame.width-100, y: frame.height-100, width: 50, height: 50))
+        // transparent background
+        button.backgroundColor = .blue.withAlphaComponent(0)
+        // make button contain large green + sign
+        button.setTitle("+", for: .normal)
+        button.titleLabel?.font = .boldSystemFont(ofSize: 50)
+        button.setTitleColor(.green, for: .normal)
+        button.addTarget(self, action: #selector(createEventButtonTapped), for: .touchUpInside)
+        
+        // add + button to view
+        self.view.addSubview(button)
 
     }
     
@@ -46,7 +61,28 @@ class ARView: UIViewController {
             sceneLocationView.addLocationNodeWithConfirmedLocation(locationNode: annotationNode)
             view.addSubview(sceneLocationView)
         }
+
+
     }
+    
+    
+    // function that runs when the create event "+" button is tapped
+    @objc func createEventButtonTapped(sender: UIButton!) {
+        // get CreateEvent.storyboard
+        let storyboard = UIStoryboard(name: "CreateEvent", bundle: nil)
+        // click on the storyboard file, click the correct view, and give it the same
+        // Storyboard ID as below
+        let vc = storyboard.instantiateViewController(
+            withIdentifier: "CreateEventStoryboardID") as! CreateEventView
+        let navController = UINavigationController(rootViewController: vc)
+        self.present(navController, animated: true, completion: nil)
+        
+        // this was the previous way I opened the CreateEventView
+        // this can be left blank for a swipe-closable modal
+        //vc.modalPresentationStyle = .fullScreen
+        //self.present(vc, animated: true, completion: nil)
+    }
+    
 
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
@@ -55,3 +91,5 @@ class ARView: UIViewController {
     }
     
 }
+
+
