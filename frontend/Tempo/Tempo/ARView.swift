@@ -9,6 +9,7 @@ import Foundation
 import ARCL
 import CoreLocation
 import UIKit
+import SwiftUI
 
 class ARView: UIViewController {
     var sceneLocationView = SceneLocationView()
@@ -20,31 +21,42 @@ class ARView: UIViewController {
         getNearbyEvents(nil)
         
         //****** ARCL Code Ends Here
-        
-        
-        
+
         //******** CreateEvent Code Below:
 
         // add "+" button to create an event
-        let frame = self.view.safeAreaLayoutGuide.layoutFrame
-        let button = UIButton(frame: CGRect(
-            x: frame.width-100, y: frame.height-100, width: 50, height: 50))
-        // transparent background
-        button.backgroundColor = .blue.withAlphaComponent(0)
-        // make button contain large green + sign
-        button.setTitle("+", for: .normal)
-        button.titleLabel?.font = .boldSystemFont(ofSize: 50)
-        button.setTitleColor(.green, for: .normal)
+        let buttonFactory = CreateEventsButton()
+        let frame = self.view.safeAreaLayoutGuide
+        print(frame)
+        let button = buttonFactory.createButton(frame:frame)
         button.addTarget(self, action: #selector(createEventButtonTapped), for: .touchUpInside)
+        
+        let toggleFactory = createToggle()
+        let toggleContainer = toggleFactory.createButtonContainer(frame: frame)
+        let mapButton = toggleFactory.createMapButton(frame:frame)
+        let ARButton = toggleFactory.createARButton(frame:frame)
+        mapButton.isEnabled = true
+        ARButton.isEnabled = false
+        mapButton.addTarget(self, action:#selector(toggleMap), for: .touchUpInside)
         
         // add + button to view
         self.view.addSubview(button)
-
+        self.view.addSubview(toggleContainer)
+        
+        toggleContainer.addArrangedSubview(mapButton)
+        toggleContainer.addArrangedSubview(ARButton)        
     }
     
+    @objc func toggleMap(sender: UIButton!){
+        sender.isEnabled = false
+        
+        let mapView = MapView()
+        let vc = UINavigationController(rootViewController: mapView)
+        vc.modalPresentationStyle = .fullScreen
+        show(vc, sender:self)
+    }
     
-    // function that runs when the create event "+" button is tapped
-    @objc func createEventButtonTapped(sender: UIButton!) {
+    @objc func createEventButtonTapped(sender: UIButton!){
         // get CreateEvent.storyboard
         let storyboard = UIStoryboard(name: "CreateEvent", bundle: nil)
         // click on the storyboard file, click the correct view, and give it the same
