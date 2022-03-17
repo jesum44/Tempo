@@ -14,18 +14,16 @@ import SwiftyJSON
 class CreateEventView: UIViewController {
     
     // function that runs when "Back" is tapped
-//    @objc func closeView(sender: UIButton!) {
-//        self.dismiss(animated: true, completion: nil)
-//    }
+    @objc func closeView(sender: UIButton!) {
+        self.dismiss(animated: true, completion: nil)
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        // add back button to top left in case user's don't want to create event
-        // removed because it can get confusing with category picker
-//        self.navigationItem.leftBarButtonItem = UIBarButtonItem(
-//            title: "< Back", style: .plain, target: self,
-//            action: #selector(self.backButtonTapped))
+        // add x button to top right in case user's don't want to create event
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(
+            barButtonSystemItem: .close, target: self, action: #selector(self.closeView))
         
         // add the form to the view
         addSwiftUIForm()

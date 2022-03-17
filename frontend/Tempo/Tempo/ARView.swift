@@ -72,18 +72,23 @@ class ARView: UIViewController {
         // Make a call to eventStore.shared.getEvents
         // That call will populate the events array with all the relevent data
         // Once the data is supplied, grab the longitude and latitude off the data and use it here to display the AR pins
-        let locationArray = [(lat: 42.2768206, longi: 83.745065), (lat: 47.2768209, longi: 83.745065)]
+        let locationArray = [
+            (lat: 42.2768206, longi: 83.745065),
+            (lat: 47.2768209, longi: 83.745065),
+            (lat: 42.295904, longi: -83.719227),
+            (lat: 42.293904, longi: -83.720686),
+        ]
         
         for (lat, longit) in locationArray {
             let coordinate = CLLocationCoordinate2D(latitude: lat, longitude: longit)
             let location = CLLocation(coordinate: coordinate, altitude: 300)
             let image = UIImage(systemName: "eye")!
             let annotationNode = LocationAnnotationNode(location: location, image: image)
+            // this works, but makes the icons so tiny you cant see them, need to increase scale
+            //annotationNode.scaleRelativeToDistance = true
             sceneLocationView.addLocationNodeWithConfirmedLocation(locationNode: annotationNode)
-            //view.addSubview(sceneLocationView)
         }
         view.addSubview(sceneLocationView)
-
     }
     
 }
