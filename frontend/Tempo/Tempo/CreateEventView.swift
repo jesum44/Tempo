@@ -10,6 +10,7 @@ import UIKit
 import SwiftUI // the form is made in SwiftUI, and embedded into UIKit's UIViewController
 import SwiftyJSON
 
+// var VIEW: UIViewController? = nil; // used to launch popups in subfunctions
 
 class CreateEventView: UIViewController {
     
@@ -107,7 +108,7 @@ struct FormView: View {
                     TextField("Description", text: $description)
                 }
                 Section {
-                    TextField("Address", text: $address)
+                    TextField("Full Address - Please Include City & State", text: $address)
                 }
                 Section {
                     Picker(selection: $categoriesSelected, label: Text("Category")) {
@@ -196,8 +197,15 @@ func makeCreateEventPostRequest(_ parameters: [String: String]) async {
     
     do {
         let (data, _) = try await URLSession.shared.upload(for: request, from: encoded)
-        print(data)
     } catch {
         print("POST Request error")
     }
+}
+
+
+func makePopup(title: String, message: String) -> UIAlertController {
+    let popup = UIAlertController(
+        title: title, message: message, preferredStyle: .alert)
+    popup.addAction(UIAlertAction(title: "OK", style: .default))
+    return popup
 }
