@@ -40,6 +40,28 @@ def events(request):
         return JsonResponse({})
 
     elif request.method == 'GET':
-        pass
+        # Get nearby events
+        start_lat = float(request.GET.get('lat'))
+        start_lon = float(request.GET.get('lon'))
+        results = int(request.GET.get('results'))
+
+        cursor = connection.cursor()
+        cursor.execute('SELECT lat, lon,' 
+                       'SQRT(
+                            'POW(69.1 * (lat - [(%f)]), 2) +'
+                            'POW(69.1 * ([(%f)] - lon) * COS(lat / 57.3), 2)'
+                        ')' 
+                       'AS distance'
+                       'FROM events' 
+                       'HAVING distance < 25' 
+                       'ORDER BY distance LIMIT 0, (%i);'
+                       (start_lat, start_lon, results)
+        )
+        nearby_events = cursor.fetchall()
+
+        response = {}
+        response['events'] = nearby_events
+        return JsonResponse(response)
+
     else:
         return HttpResponse(status=404)
