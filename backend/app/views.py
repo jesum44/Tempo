@@ -33,12 +33,12 @@ def events(request):
         lat = g.lat
         lon = g.lng
 
-        start_time = datetime.fromtimestamp(json['start_time'])
-        end_time = datetime.fromtimestamp(json['end_time'])
+        start_time = datetime.fromtimestamp(int(json_data['start_time']))
+        end_time = datetime.fromtimestamp(int(json_data['end_time']))
 
         cursor = connection.cursor()
-        cursor.execute('INSERT INTO events'
-            '(event_id, user_id, title, description, address, lat, lon, start_time, end_time) VALUES'
+        cursor.execute('INSERT INTO events '
+            '(event_id, user_id, title, description, address, lat, lon, start_time, end_time) VALUES '
             '(%s, %s, %s, %s, %s, %s, %s, %s, %s);', (event_id, user_id, title, description, address, lat, lon, start_time, end_time))
 
         return HttpResponse(status=201)
