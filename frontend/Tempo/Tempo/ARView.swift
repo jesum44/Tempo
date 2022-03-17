@@ -83,6 +83,8 @@ class ARView: UIViewController {
             let lat = Double(event[0])!
             let lon = Double(event[1])!
             let title = event[2]
+            
+            
             let coordinate = CLLocationCoordinate2D(latitude: lat, longitude: lon)
             let location = CLLocation(coordinate: coordinate, altitude: 300)
             //let image = UIImage(systemName: "eye")!
@@ -100,7 +102,7 @@ class ARView: UIViewController {
 
 
 
-// Extension to UIView from ARKit-CoreLocation github
+// Extension to UIView provided by ARKit-CoreLocation library
 extension UIView {
     // Create a colored view with label, border, and rounded corners.
     class func prettyLabeledView(text: String,
