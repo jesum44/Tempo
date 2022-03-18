@@ -21,7 +21,7 @@ var locationArray: [[String]] = [
 ]
 
 
-class ARView: UIViewController /*, CLLocationManagerDelegate*/ {
+class ARView: UIViewController, CLLocationManagerDelegate {
     var sceneLocationView = SceneLocationView()
     private let locmanager = CLLocationManager()
     private var lat = 0.0
@@ -30,16 +30,13 @@ class ARView: UIViewController /*, CLLocationManagerDelegate*/ {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        //locmanager.delegate = self
+        locmanager.delegate = self
         locmanager.desiredAccuracy = kCLLocationAccuracyBest
         locmanager.requestWhenInUseAuthorization()
         locmanager.startUpdatingLocation()
         
         getNearbyEvents(nil)
-
         sceneLocationView.run()
-        
-        //****** ARCL Code Ends Here
         self.addButtons()
     }
     
@@ -113,7 +110,9 @@ class ARView: UIViewController /*, CLLocationManagerDelegate*/ {
         
         
         // TODO: REMOVE & REPLACE
-        locationArray.append(["42.298275", "-83.720859", "Smash Bros Tournament"])
+        // locationArray.append(["42.298275", "-83.720859", "Smash Bros Tournament"])
+        
+        
         getNearbyEvents(nil)
     }
     
@@ -167,6 +166,7 @@ class ARView: UIViewController /*, CLLocationManagerDelegate*/ {
             ) {
                 //print(EventStore.shared.events)
             }
+            
         }
             
         
