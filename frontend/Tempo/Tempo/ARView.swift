@@ -161,9 +161,12 @@ class ARView: UIViewController /*, CLLocationManagerDelegate*/ {
         // Make a call to eventStore.shared.getEvents
         // That call will populate the events array with all the relevent data
         // Once the data is supplied, grab the longitude and latitude off the data and use it here to display the AR pins
-        EventStore.shared.getEvents(lat, lon: lon)
+        EventStore.shared.getEvents() {
+            print(EventStore.shared.events)
+        }
+       
         for var event in EventStore.shared.events{
-            //print(event)
+            print(event)
         }
         
         

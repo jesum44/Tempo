@@ -49,9 +49,9 @@ final class EventStore {
             }.resume()
         }
     
-    func getEvents(_ lat: Double, lon: Double) {
-        //print(lat)
-        //print(lon)
+    func getEvents(onCompleted: @escaping () -> ()) {
+        let lat = 44.0
+        let lon = -83.0
             guard var apiUrl = URLComponents(string: serverUrl+"events") else {
                 print("getEvents: Bad URL")
                 return
@@ -61,9 +61,7 @@ final class EventStore {
             URLQueryItem(name: "lon", value: String(lon)),
             URLQueryItem(name: "results", value: String(10))
         ]
-        //print(apiUrl)
         
-        //print(apiUrl.url!)
         var request = URLRequest(url: apiUrl.url!)
             request.httpMethod = "GET"
 
@@ -83,14 +81,9 @@ final class EventStore {
                     print("getEvents: failed JSON deserialization")
                     return
                 }
-                //print("!!!!!!!!!!")
-                //print(jsonObj["events"])
                 let eventsReceived = jsonObj["events"] as? [[Any]] ?? []
-                //print(eventsReceived)
                 self.events = [Event]()
                 for eventEntry in eventsReceived {
-                    //print("hi")
-                    //print(eventEntry)
                     if eventEntry.count == self.nFields {
                         self.events.append(Event(event_id: eventEntry[0] as! String?,
                                                  title: eventEntry[1] as! String?,
@@ -104,7 +97,7 @@ final class EventStore {
                         print("getEvents: Received unexpected number of fields: \(eventEntry.count) instead of \(self.nFields).")
                     }
                 }
-               
+                onCompleted()
             }.resume()
         }
 }
