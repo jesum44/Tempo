@@ -33,17 +33,44 @@ def events(request):
         lat = g.lat
         lon = g.lng
 
-        start_time = datetime.fromtimestamp(json['start_time'])
-        end_time = datetime.fromtimestamp(json['end_time'])
+        start_time = datetime.fromtimestamp(int(json_data['start_time']))
+        end_time = datetime.fromtimestamp(int(json_data['end_time']))
 
         cursor = connection.cursor()
-        cursor.execute('INSERT INTO events'
-            '(event_id, user_id, title, description, address, lat, lon, start_time, end_time) VALUES'
+        cursor.execute('INSERT INTO events '
+            '(event_id, user_id, title, description, address, lat, lon, start_time, end_time) VALUES '
             '(%s, %s, %s, %s, %s, %s, %s, %s, %s);', (event_id, user_id, title, description, address, lat, lon, start_time, end_time))
 
         return HttpResponse(status=201)
 
     elif request.method == 'GET':
-        pass
+        # Get nearby events
+        start_lat = float(request.GET.get('lat'))
+        start_lon = float(request.GET.get('lon'))
+        results = int(request.GET.get('results'))
+
+        cursor = connection.cursor()
+        cursor.execute('SELECT x.event_id, x.title, x.address, x.lat, x.lon, x.start_time, x.start_time, x.description FROM'
+                       '('
+                         'SELECT event_id, title, address, lat, lon, start_time, end_time, description, '
+                           'SQRT('
+                             'POW(69.1 * (lat - %s), 2) + '
+                             'POW(69.1 * (%s - lon) * COS(lat / 57.3), 2)'
+                           ') '
+                           'AS distance '
+                           'FROM events '
+                       ') AS x '
+                       'WHERE x.distance < 10000 '
+                       'ORDER BY x.distance LIMIT %s;',
+                       (start_lat, start_lon, results))
+
+        # columns = [col[0] for col in cursor.description]
+        # nearby_events = [ dict(zip(columns, row)) for row in cursor.fetchall() ]
+        nearby_events = cursor.fetchall()
+
+        response = {}
+        response['events'] = nearby_events
+        return JsonResponse(response)
+
     else:
         return HttpResponse(status=404)

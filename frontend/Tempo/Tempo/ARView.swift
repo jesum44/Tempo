@@ -10,42 +10,80 @@ import ARCL
 import CoreLocation
 import UIKit
 import SwiftyJSON
+import SwiftUI
 
-class ARView: UIViewController {
+class ARView: UIViewController, CLLocationManagerDelegate {
     var sceneLocationView = SceneLocationView()
+    private let locmanager = CLLocationManager()
+    private var lat = 0.0
+    private var lon = 0.0
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        locmanager.delegate = self
+        locmanager.desiredAccuracy = kCLLocationAccuracyBest
+        locmanager.requestWhenInUseAuthorization()
+        locmanager.startUpdatingLocation()
+        getNearbyEvents(nil)
 
         sceneLocationView.run()
-        getNearbyEvents(nil)
         
         //****** ARCL Code Ends Here
-        
-        
-        
+
         //******** CreateEvent Code Below:
 
         // add "+" button to create an event
-        let frame = self.view.safeAreaLayoutGuide.layoutFrame
-        let button = UIButton(frame: CGRect(
-            x: frame.width-100, y: frame.height-100, width: 50, height: 50))
-        // transparent background
-        button.backgroundColor = .blue.withAlphaComponent(0)
-        // make button contain large green + sign
-        button.setTitle("+", for: .normal)
-        button.titleLabel?.font = .boldSystemFont(ofSize: 50)
-        button.setTitleColor(.green, for: .normal)
+        let buttonFactory = CreateEventsButton()
+        let frame = self.view.safeAreaLayoutGuide
+        print(frame)
+        let button = buttonFactory.createButton(frame:frame)
         button.addTarget(self, action: #selector(createEventButtonTapped), for: .touchUpInside)
+        
+        let toggleFactory = createToggle()
+        let toggleContainer = toggleFactory.createButtonContainer(frame: frame)
+        let mapButton = toggleFactory.createMapButton(frame:frame)
+        let ARButton = toggleFactory.createARButton(frame:frame)
+        mapButton.isEnabled = true
+        ARButton.isEnabled = false
+        mapButton.addTarget(self, action:#selector(toggleMap), for: .touchUpInside)
         
         // add + button to view
         self.view.addSubview(button)
-
+        self.view.addSubview(toggleContainer)
+        
+        toggleContainer.addArrangedSubview(mapButton)
+        toggleContainer.addArrangedSubview(ARButton)        
     }
     
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+           if let location = locations.last {
+               
+               // If the user has moved a significant distance, call getNearbyEvent again
+               if (abs(lat - location.coordinate.latitude) > 0.001 || abs(lon - location.coordinate.longitude) > 0.001) {
+                   lat = location.coordinate.latitude
+                   lon = location.coordinate.longitude
+                   getNearbyEvents(nil)
+               }
+               
+               // Get user's location
+               lat = location.coordinate.latitude
+               lon = location.coordinate.longitude
+            
+           }
+       
+       }
     
-    // function that runs when the create event "+" button is tapped
-    @objc func createEventButtonTapped(sender: UIButton!) {
+    @objc func toggleMap(sender: UIButton!){
+        sender.isEnabled = false
+        
+        let mapView = MapView()
+        let vc = UINavigationController(rootViewController: mapView)
+        vc.modalPresentationStyle = .fullScreen
+        show(vc, sender:self)
+    }
+    
+    @objc func createEventButtonTapped(sender: UIButton!){
         // get CreateEvent.storyboard
         let storyboard = UIStoryboard(name: "CreateEvent", bundle: nil)
         // click on the storyboard file, click the correct view, and give it the same
@@ -106,6 +144,13 @@ class ARView: UIViewController {
         // Make a call to eventStore.shared.getEvents
         // That call will populate the events array with all the relevent data
         // Once the data is supplied, grab the longitude and latitude off the data and use it here to display the AR pins
+        EventStore.shared.getEvents(lat, lon: lon)
+        for event in EventStore.shared.events{
+            print(event)
+        }
+        
+        
+        
         let locationArray: [[String]] = [
             ["42.2768206", "83.745065", "Pizza Party"],
             ["47.2768209", "83.745065", "Board Games"],

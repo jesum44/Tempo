@@ -1,11 +1,12 @@
 
 
 struct Event {
-    var name: String?
+    var event_id: String?
+    var title: String?
     var address: String?
-    var time: String?
-    var eventId: String?
-    var description: String?
-    var longititude: String?
     var latitude: String?
+    var longititude: String?
+    var start_time: String?
+    var end_time: String?
+    var description: String?
 }
