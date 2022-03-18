@@ -29,9 +29,9 @@ final class MapView:UIViewController {
         button.addTarget(self, action: #selector(createEventButtonTapped), for: .touchUpInside)
         
         let toggleFactory = createToggle()
-        let toggleContainer = toggleFactory.createButtonContainer(frame: frame)
-        let mapButton = toggleFactory.createMapButton(frame:frame)
-        let ARButton = toggleFactory.createARButton(frame:frame)
+        let toggleContainer = toggleFactory.createButtonContainer(screenHeight: screenHeight)
+        let mapButton = toggleFactory.createMapButton(screenHeight: screenHeight)
+        let ARButton = toggleFactory.createARButton(screenHeight: screenHeight)
         mapButton.isEnabled = false
         ARButton.isEnabled = true
         ARButton.addTarget(self, action:#selector(toggleAR), for: .touchUpInside)

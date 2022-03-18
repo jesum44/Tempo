@@ -11,9 +11,10 @@ import SwiftUI
 
 final class createToggle {
     
-    func createButtonContainer(frame: UILayoutGuide) -> UIStackView {
+    func createButtonContainer(screenHeight: CGFloat) -> UIStackView {
+        
         let buttonContainer = UIStackView(frame:CGRect(
-            x:30, y:frame.layoutFrame.height-130, width: 200, height:70))
+            x:30, y:screenHeight-130, width: 200, height:70))
         buttonContainer.axis = .horizontal
         buttonContainer.backgroundColor = UIColor.white.withAlphaComponent(0.7)
         buttonContainer.layer.cornerRadius = 10
@@ -22,9 +23,9 @@ final class createToggle {
         return buttonContainer
     }
     
-    func createMapButton(frame: UILayoutGuide) -> UIButton {
+    func createMapButton(screenHeight: CGFloat) -> UIButton {
         let mapToggle = UIButton(frame:CGRect(
-            x:30, y:frame.layoutFrame.height-130, width: 50, height:50))
+            x:30, y:screenHeight-130, width: 50, height:50))
         let mapImg = UIImage(named: "mapIcon")?.withTintColor(.black)
         mapToggle.setImage(mapImg, for: .normal)
         let mapImg2 = UIImage(named: "mapIcon")?.withTintColor(.gray)
@@ -33,9 +34,9 @@ final class createToggle {
         return mapToggle
     }
     
-    func createARButton(frame: UILayoutGuide) -> UIButton {
+    func createARButton(screenHeight: CGFloat) -> UIButton {
         let VRToggle = UIButton(frame: CGRect(
-            x: 80, y: frame.layoutFrame.height-130, width: 50, height: 50))
+            x: 80, y: screenHeight-130, width: 50, height: 50))
         VRToggle.backgroundColor = .blue.withAlphaComponent(0)
         let VRImg = UIImage(named: "goggles")?.withTintColor(.black)
         VRToggle.setImage(VRImg, for: .normal)

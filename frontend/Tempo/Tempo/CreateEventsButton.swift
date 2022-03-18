@@ -8,12 +8,25 @@
 import Foundation
 import UIKit
 
+var initialValue = -1.1
+var screenHeight = initialValue
+var screenWidth = initialValue
+
 final class CreateEventsButton: UIViewController {
     
     func createButton(frame: UILayoutGuide) -> UIButton {
+        // make sure buttons are always added to bottom right of screen and not any subviews
+        if screenHeight == initialValue {
+            screenHeight = frame.layoutFrame.height
+        }
+        if screenWidth == initialValue {
+            screenWidth = frame.layoutFrame.width
+        }
+        
+        
         //let frame = self.view.safeAreaLayoutGuide.layoutFrame
         let button = UIButton(frame: CGRect(
-            x: frame.layoutFrame.width-70, y: frame.layoutFrame.height-120, width: 50, height: 50))
+            x: screenWidth-70, y: screenHeight-120, width: 50, height: 50))
         // transparent background
         button.backgroundColor = .blue.withAlphaComponent(0)
         // make button contain large green + sign

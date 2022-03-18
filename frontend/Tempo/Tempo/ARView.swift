@@ -4,7 +4,6 @@
 //
 //  Created by Sam Korman on 3/14/22.
 //
-
 import Foundation
 import ARCL
 import CoreLocation
@@ -12,7 +11,17 @@ import UIKit
 import SwiftyJSON
 import SwiftUI
 
-class ARView: UIViewController, CLLocationManagerDelegate {
+
+// TODO: REMOVE & REPLACE
+var locationArray: [[String]] = [
+    ["42.2768206", "83.745065", "Pizza Party"],
+    ["42.3031", "-83.729657", "Board Games"],
+    ["42.295904", "-83.719227", "Jam Sesh"],
+    ["42.293904", "-83.720686", "Free Food"],
+]
+
+
+class ARView: UIViewController /*, CLLocationManagerDelegate*/ {
     var sceneLocationView = SceneLocationView()
     private let locmanager = CLLocationManager()
     private var lat = 0.0
@@ -21,29 +30,32 @@ class ARView: UIViewController, CLLocationManagerDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        locmanager.delegate = self
-        locmanager.desiredAccuracy = kCLLocationAccuracyBest
-        locmanager.requestWhenInUseAuthorization()
-        locmanager.startUpdatingLocation()
+//        locmanager.delegate = self
+//        locmanager.desiredAccuracy = kCLLocationAccuracyBest
+//        locmanager.requestWhenInUseAuthorization()
+//        locmanager.startUpdatingLocation()
         getNearbyEvents(nil)
 
         sceneLocationView.run()
         
         //****** ARCL Code Ends Here
-
+        self.addButtons()
+    }
+    
+    func addButtons() {
         //******** CreateEvent Code Below:
-
         // add "+" button to create an event
         let buttonFactory = CreateEventsButton()
         let frame = self.view.safeAreaLayoutGuide
-        print(frame)
+        //print(frame)
         let button = buttonFactory.createButton(frame:frame)
+        
         button.addTarget(self, action: #selector(createEventButtonTapped), for: .touchUpInside)
         
         let toggleFactory = createToggle()
-        let toggleContainer = toggleFactory.createButtonContainer(frame: frame)
-        let mapButton = toggleFactory.createMapButton(frame:frame)
-        let ARButton = toggleFactory.createARButton(frame:frame)
+        let toggleContainer = toggleFactory.createButtonContainer(screenHeight: screenHeight)
+        let mapButton = toggleFactory.createMapButton(screenHeight: screenHeight)
+        let ARButton = toggleFactory.createARButton(screenHeight: screenHeight)
         mapButton.isEnabled = true
         ARButton.isEnabled = false
         mapButton.addTarget(self, action:#selector(toggleMap), for: .touchUpInside)
@@ -53,7 +65,7 @@ class ARView: UIViewController, CLLocationManagerDelegate {
         self.view.addSubview(toggleContainer)
         
         toggleContainer.addArrangedSubview(mapButton)
-        toggleContainer.addArrangedSubview(ARButton)        
+        toggleContainer.addArrangedSubview(ARButton)
     }
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
@@ -97,6 +109,11 @@ class ARView: UIViewController, CLLocationManagerDelegate {
         // this can be left blank for a swipe-closable modal
         //vc.modalPresentationStyle = .fullScreen
         //self.present(vc, animated: true, completion: nil)
+        
+        
+        // TODO: REMOVE & REPLACE
+        locationArray.append(["42.298275", "-83.720859", "Smash Bros Tournament"])
+        getNearbyEvents(nil)
     }
     
 
@@ -130,15 +147,14 @@ class ARView: UIViewController, CLLocationManagerDelegate {
             var urlComps = URLComponents(string: baseAPIUrl)!
             urlComps.queryItems = queryParams
             let apiURL = urlComps.url!
-            print(apiURL)
+            //print(apiURL)
             
             let task = URLSession.shared.dataTask(with: apiURL) { data, res, err in
                 guard let data = data, err == nil else {
                     print("GET nearbyEvents had error!")
                     return
                 }
-                print("res below")
-                print(res ?? ":(")
+                //print(res ?? ":(")
             }
         }
             
@@ -146,19 +162,10 @@ class ARView: UIViewController, CLLocationManagerDelegate {
         // That call will populate the events array with all the relevent data
         // Once the data is supplied, grab the longitude and latitude off the data and use it here to display the AR pins
         EventStore.shared.getEvents(lat, lon: lon)
-        for event in EventStore.shared.events{
-            print(event)
+        for var event in EventStore.shared.events{
+            //print(event)
         }
         
-        
-        
-        var locationArray: [[String]] = [
-            ["42.2768206", "83.745065", "Pizza Party"],
-            ["47.2768209", "83.745065", "Board Games"],
-            ["42.295904", "-83.719227", "Jam Sesh"],
-            ["42.293904", "-83.720686", "Free Food"],
-        ]
-        //var locationArray = EventStore.shared.events;
         
         for event in locationArray {
             let lat = Double(event[0])!
@@ -169,14 +176,16 @@ class ARView: UIViewController, CLLocationManagerDelegate {
             let coordinate = CLLocationCoordinate2D(latitude: lat, longitude: lon)
             let location = CLLocation(coordinate: coordinate, altitude: 300)
             //let image = UIImage(systemName: "eye")!
-            let view = UIView.prettyLabeledView(
+            let eventLabel = UIView.prettyLabeledView(
                 text: title, backgroundColor: .white, textColor: .black)
-            let annotationNode = LocationAnnotationNode(location: location, view: view)
+            let annotationNode = LocationAnnotationNode(location: location, view: eventLabel)
             // this works, but makes the icons so tiny you cant see them, need to increase scale
             //annotationNode.scaleRelativeToDistance = true
             sceneLocationView.addLocationNodeWithConfirmedLocation(locationNode: annotationNode)
         }
-        view.addSubview(sceneLocationView)
+        
+        self.view.addSubview(sceneLocationView)
+        self.addButtons()
     }
 }
 
