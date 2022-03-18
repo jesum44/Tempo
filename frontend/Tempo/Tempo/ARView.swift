@@ -11,14 +11,22 @@ import CoreLocation
 import UIKit
 import SwiftUI
 
-class ARView: UIViewController {
+class ARView: UIViewController, CLLocationManagerDelegate {
     var sceneLocationView = SceneLocationView()
+    private let locmanager = CLLocationManager()
+    private var lat = 0.0
+    private var lon = 0.0
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        locmanager.delegate = self
+        locmanager.desiredAccuracy = kCLLocationAccuracyBest
+        locmanager.requestWhenInUseAuthorization()
+        locmanager.startUpdatingLocation()
+        getNearbyEvents(nil)
 
         sceneLocationView.run()
-        getNearbyEvents(nil)
         
         //****** ARCL Code Ends Here
 
@@ -46,6 +54,24 @@ class ARView: UIViewController {
         toggleContainer.addArrangedSubview(mapButton)
         toggleContainer.addArrangedSubview(ARButton)        
     }
+    
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+           if let location = locations.last {
+               
+               // If the user has moved a significant distance, call getNearbyEvent again
+               if (abs(lat - location.coordinate.latitude) > 0.001 || abs(lon - location.coordinate.longitude) > 0.001) {
+                   lat = location.coordinate.latitude
+                   lon = location.coordinate.longitude
+                   getNearbyEvents(nil)
+               }
+               
+               // Get user's location
+               lat = location.coordinate.latitude
+               lon = location.coordinate.longitude
+            
+           }
+       
+       }
     
     @objc func toggleMap(sender: UIButton!){
         sender.isEnabled = false
@@ -84,6 +110,13 @@ class ARView: UIViewController {
         // Make a call to eventStore.shared.getEvents
         // That call will populate the events array with all the relevent data
         // Once the data is supplied, grab the longitude and latitude off the data and use it here to display the AR pins
+        EventStore.shared.getEvents(lat, lon: lon)
+        for event in EventStore.shared.events{
+            print(event)
+        }
+        
+        
+        
         let locationArray: [[String]] = [
             ["42.2768206", "83.745065", "Pizza Party"],
             ["47.2768209", "83.745065", "Board Games"],

@@ -15,13 +15,13 @@ final class EventStore {
     var events = [Event]()
     private let nFields = Mirror(reflecting: Event()).children.count
 
-    private let serverUrl = "https://34.74.252.207/"
+    private let serverUrl = "https://54.175.206.175/"
 
     
     func postEvent(_ event: Event) {
-            let jsonObj = ["name": event.name,
+            let jsonObj = ["name": event.title,
                            "address": event.address,
-                           "time": event.time,
+                           "time": event.start_time,
                            "description": event.description]
             guard let jsonData = try? JSONSerialization.data(withJSONObject: jsonObj) else {
                 print("postEvent: jsonData serialization error")
@@ -49,18 +49,26 @@ final class EventStore {
             }.resume()
         }
     
-    func getEvents(_ completion: ((Bool) -> ())?) {
-            guard let apiUrl = URL(string: serverUrl+"events/") else {
+    func getEvents(_ lat: Double, lon: Double) {
+        print(lat)
+        print(lon)
+            guard var apiUrl = URLComponents(string: serverUrl+"events") else {
                 print("getEvents: Bad URL")
                 return
             }
-            
-            var request = URLRequest(url: apiUrl)
+        apiUrl.queryItems = [
+            URLQueryItem(name: "lat", value: String(lat)),
+            URLQueryItem(name: "lon", value: String(lon)),
+            URLQueryItem(name: "results", value: String(10))
+        ]
+        print(apiUrl)
+        
+        print(apiUrl.url!)
+        var request = URLRequest(url: apiUrl.url!)
             request.httpMethod = "GET"
 
             URLSession.shared.dataTask(with: request) { data, response, error in
-                var success = false
-                defer { completion?(success) }
+               
                 
                 guard let data = data, error == nil else {
                     print("getEvents: NETWORKING ERROR")
@@ -75,22 +83,28 @@ final class EventStore {
                     print("getEvents: failed JSON deserialization")
                     return
                 }
-                let eventsReceived = jsonObj["chatts"] as? [[String?]] ?? []
+                print("!!!!!!!!!!")
+                print(jsonObj["events"])
+                let eventsReceived = jsonObj["events"] as? [[String?]] ?? []
+                print(eventsReceived)
                 self.events = [Event]()
                 for eventEntry in eventsReceived {
+                    print("hi")
+                    print(eventEntry)
                     if eventEntry.count == self.nFields {
-                        self.events.append(Event(name: eventEntry[0],
-                                            address: eventEntry[1],
-                                            time: eventEntry[2],
-                                                 eventId: eventEntry[3],
-                                                 description: eventEntry[4],
-                                                longititude: eventEntry[5],
-                                                latitude: eventEntry[6]))
+                        self.events.append(Event(event_id: eventEntry[0],
+                                            title: eventEntry[1],
+                                            address: eventEntry[2],
+                                                 latitude: eventEntry[3],
+                                                 longititude: eventEntry[4],
+                                                 start_time: eventEntry[5],
+                                                end_time:  eventEntry[6],
+                                                description: eventEntry[7]))
                     } else {
                         print("getEvents: Received unexpected number of fields: \(eventEntry.count) instead of \(self.nFields).")
                     }
                 }
-                success = true // for completion(success)
+               
             }.resume()
         }
 }
