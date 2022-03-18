@@ -49,9 +49,7 @@ final class EventStore {
             }.resume()
         }
     
-    func getEvents(onCompleted: @escaping () -> ()) {
-        let lat = 44.0
-        let lon = -83.0
+    func getEvents(lat: Double, lon: Double, onCompleted: @escaping () -> ()) {
             guard var apiUrl = URLComponents(string: serverUrl+"events") else {
                 print("getEvents: Bad URL")
                 return
