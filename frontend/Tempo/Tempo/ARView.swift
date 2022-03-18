@@ -30,10 +30,11 @@ class ARView: UIViewController /*, CLLocationManagerDelegate*/ {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-//        locmanager.delegate = self
-//        locmanager.desiredAccuracy = kCLLocationAccuracyBest
-//        locmanager.requestWhenInUseAuthorization()
-//        locmanager.startUpdatingLocation()
+        //locmanager.delegate = self
+        locmanager.desiredAccuracy = kCLLocationAccuracyBest
+        locmanager.requestWhenInUseAuthorization()
+        locmanager.startUpdatingLocation()
+        
         getNearbyEvents(nil)
 
         sceneLocationView.run()
@@ -105,10 +106,10 @@ class ARView: UIViewController /*, CLLocationManagerDelegate*/ {
         let navController = UINavigationController(rootViewController: vc)
         self.present(navController, animated: true, completion: nil)
         
-        // this was the previous way I opened the CreateEventView
-        // this can be left blank for a swipe-closable modal
-        //vc.modalPresentationStyle = .fullScreen
-        //self.present(vc, animated: true, completion: nil)
+         this was the previous way I opened the CreateEventView
+         this can be left blank for a swipe-closable modal
+        vc.modalPresentationStyle = .fullScreen
+        self.present(vc, animated: true, completion: nil)
         
         
         // TODO: REMOVE & REPLACE
@@ -162,20 +163,14 @@ class ARView: UIViewController /*, CLLocationManagerDelegate*/ {
         // That call will populate the events array with all the relevent data
         // Once the data is supplied, grab the longitude and latitude off the data and use it here to display the AR pins
         EventStore.shared.getEvents() {
-            print(EventStore.shared.events)
+            //print(EventStore.shared.events)
         }
        
-        for var event in EventStore.shared.events{
-            print(event)
-        }
-        
-        
-        for event in locationArray {
-            let lat = Double(event[0])!
-            let lon = Double(event[1])!
-            let title = event[2]
-            
-            
+        for event in EventStore.shared.events {
+            var lat = Double( event.latitude! )!
+            var lon = Double( event.longititude! )!
+            let title = event.title!
+                        
             let coordinate = CLLocationCoordinate2D(latitude: lat, longitude: lon)
             let location = CLLocation(coordinate: coordinate, altitude: 300)
             //let image = UIImage(systemName: "eye")!
@@ -186,6 +181,24 @@ class ARView: UIViewController /*, CLLocationManagerDelegate*/ {
             //annotationNode.scaleRelativeToDistance = true
             sceneLocationView.addLocationNodeWithConfirmedLocation(locationNode: annotationNode)
         }
+        
+        
+//        for event in locationArray {
+//            let lat = Double(event[0])!
+//            let lon = Double(event[1])!
+//            let title = event[2]
+//
+//
+//            let coordinate = CLLocationCoordinate2D(latitude: lat, longitude: lon)
+//            let location = CLLocation(coordinate: coordinate, altitude: 300)
+//            //let image = UIImage(systemName: "eye")!
+//            let eventLabel = UIView.prettyLabeledView(
+//                text: title, backgroundColor: .white, textColor: .black)
+//            let annotationNode = LocationAnnotationNode(location: location, view: eventLabel)
+//            // this works, but makes the icons so tiny you cant see them, need to increase scale
+//            //annotationNode.scaleRelativeToDistance = true
+//            sceneLocationView.addLocationNodeWithConfirmedLocation(locationNode: annotationNode)
+//        }
         
         self.view.addSubview(sceneLocationView)
         self.addButtons()
