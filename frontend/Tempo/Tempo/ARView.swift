@@ -47,7 +47,7 @@ class ARView: UIViewController /*, CLLocationManagerDelegate*/ {
         // add "+" button to create an event
         let buttonFactory = CreateEventsButton()
         let frame = self.view.safeAreaLayoutGuide
-        //print(frame)
+
         let button = buttonFactory.createButton(frame:frame)
         
         button.addTarget(self, action: #selector(createEventButtonTapped), for: .touchUpInside)
