@@ -50,9 +50,9 @@ def events(request):
         results = int(request.GET.get('results'))
 
         cursor = connection.cursor()
-        cursor.execute('SELECT x.title, x.address FROM'
+        cursor.execute('SELECT x.event_id, x.title, x.address, x.lat, x.lon, x.start_time, x.start_time, x.description FROM'
                        '('
-                         'SELECT title, address, '
+                         'SELECT event_id, title, address, lat, lon, start_time, end_time, description, '
                            'SQRT('
                              'POW(69.1 * (lat - %s), 2) + '
                              'POW(69.1 * (%s - lon) * COS(lat / 57.3), 2)'
