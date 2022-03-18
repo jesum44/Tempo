@@ -9,6 +9,7 @@ import Foundation
 import ARCL
 import CoreLocation
 import UIKit
+import SwiftyJSON
 
 class ARView: UIViewController {
     var sceneLocationView = SceneLocationView()
@@ -68,6 +69,39 @@ class ARView: UIViewController {
     }
     
     private func getNearbyEvents(_ sender: UIAction?) {
+        var locManager = CLLocationManager()
+        locManager.requestWhenInUseAuthorization()
+        
+        if (CLLocationManager.authorizationStatus() == CLAuthorizationStatus.authorizedWhenInUse
+            || CLLocationManager.authorizationStatus() == CLAuthorizationStatus.authorizedAlways
+            )
+        {
+            guard let currentLocation = locManager.location else {
+                print("Error: ARView:getNearbyEvents - Unable to acquire user's location!")
+                return
+            }
+            
+            let baseAPIUrl = "https://54.175.206.175/events"
+            let queryParams = [
+                URLQueryItem(name: "lat",
+                             value: String(currentLocation.coordinate.latitude)),
+                URLQueryItem(name: "lon",
+                             value: String(currentLocation.coordinate.longitude)),
+                URLQueryItem(name: "results", value: "20")
+            ]
+            var urlComps = URLComponents(string: baseAPIUrl)!
+            urlComps.queryItems = queryParams
+            let apiURL = urlComps.url!
+            print(apiURL)
+            
+            let task = URLSession.shared.dataTask(with: apiURL) { data, res, err in
+                guard let data = data, err == nil else {
+                    print("GET nearbyEvents had error!")
+                    return
+                }
+                print(res ?? ":(")
+            }
+        }
             
         // Make a call to eventStore.shared.getEvents
         // That call will populate the events array with all the relevent data
@@ -97,7 +131,6 @@ class ARView: UIViewController {
         }
         view.addSubview(sceneLocationView)
     }
-    
 }
 
 

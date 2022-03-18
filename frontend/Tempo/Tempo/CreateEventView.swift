@@ -141,13 +141,15 @@ struct FormView: View {
                                     options: JSONSerialization.WritingOptions.prettyPrinted)!
 
                                 let parameters: [String: String] = [
-                                    "user_id": "1",
+                                    "user_id": "admin",
                                     "title": self.title,
                                     "description": self.description,
                                     "address": self.address,
                                     "categories": categoriesSelectedJSON,
-                                    "start_time": String(self.startTime.timeIntervalSince1970),
-                                    "end_time": String(self.endTime.timeIntervalSince1970),
+                                    "start_time":
+                                        String(Int(self.startTime.timeIntervalSince1970)),
+                                    "end_time":
+                                        String(Int(self.endTime.timeIntervalSince1970)),
                                     
                                 ]
                                     
@@ -184,7 +186,8 @@ class SheetDismisserProtocol: ObservableObject {
 //      it can't be json-encoded
 func makeCreateEventPostRequest(_ parameters: [String: String]) async {
     // TODO: replace this with what the backend team provides
-    let url = "https://ptsv2.com/t/13soj-1647428183/post"
+    //let url = "https://ptsv2.com/t/13soj-1647428183/post"
+    let url = "https://54.175.206.175/events"
     
     guard let encoded = try? JSONEncoder().encode(parameters) else {
         print("JSONEncoder error")
@@ -196,7 +199,8 @@ func makeCreateEventPostRequest(_ parameters: [String: String]) async {
     request.httpMethod = "POST"
     
     do {
-        let (data, _) = try await URLSession.shared.upload(for: request, from: encoded)
+        let (data, res) = try await URLSession.shared.upload(for: request, from: encoded)
+        print(res)
     } catch {
         print("POST Request error")
     }
