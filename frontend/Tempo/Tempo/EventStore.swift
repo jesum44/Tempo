@@ -50,6 +50,8 @@ final class EventStore {
         }
     
     func getEvents(lat: Double, lon: Double, onCompleted: @escaping () -> ()) {
+        print(lat)
+        print(lon)
             guard var apiUrl = URLComponents(string: serverUrl+"events") else {
                 print("getEvents: Bad URL")
                 return

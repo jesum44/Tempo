@@ -35,7 +35,7 @@ class ARView: UIViewController, CLLocationManagerDelegate {
         locmanager.requestWhenInUseAuthorization()
         locmanager.startUpdatingLocation()
         
-        getNearbyEvents(nil)
+//        getNearbyEvents(nil)
         sceneLocationView.run()
         self.addButtons()
     }
@@ -124,6 +124,7 @@ class ARView: UIViewController, CLLocationManagerDelegate {
     }
     
     private func getNearbyEvents(_ sender: UIAction?) {
+        print("getNearbyEventsCalled")
         var locManager = CLLocationManager()
         locManager.requestWhenInUseAuthorization()
         
@@ -136,26 +137,6 @@ class ARView: UIViewController, CLLocationManagerDelegate {
                 return
             }
             
-            let baseAPIUrl = "https://54.175.206.175/events"
-            let queryParams = [
-                URLQueryItem(name: "lat",
-                             value: String(currentLocation.coordinate.latitude)),
-                URLQueryItem(name: "lon",
-                             value: String(currentLocation.coordinate.longitude)),
-                URLQueryItem(name: "results", value: "20")
-            ]
-            var urlComps = URLComponents(string: baseAPIUrl)!
-            urlComps.queryItems = queryParams
-            let apiURL = urlComps.url!
-            //print(apiURL)
-            
-            let task = URLSession.shared.dataTask(with: apiURL) { data, res, err in
-                guard let data = data, err == nil else {
-                    print("GET nearbyEvents had error!")
-                    return
-                }
-                //print(res ?? ":(")
-            }
             
             // Make a call to eventStore.shared.getEvents
             // That call will populate the events array with all the relevent data
@@ -164,30 +145,31 @@ class ARView: UIViewController, CLLocationManagerDelegate {
                 lat: currentLocation.coordinate.latitude,
                 lon: currentLocation.coordinate.longitude
             ) {
-                //print(EventStore.shared.events)
+                
+                for event in EventStore.shared.events {
+                    var lat = Double( event.latitude! )!
+                    var lon = Double( event.longititude! )!
+                    let title = event.title!
+                                
+                    let coordinate = CLLocationCoordinate2D(latitude: lat, longitude: lon)
+
+                    let location = CLLocation(coordinate: coordinate, altitude: 300)
+                    //let image = UIImage(systemName: "eye")!
+                    let eventLabel = UIView.prettyLabeledView(
+                        text: title, backgroundColor: .white, textColor: .black)
+                    let annotationNode = LocationAnnotationNode(location: location, view: eventLabel)
+                    // this works, but makes the icons so tiny you cant see them, need to increase scale
+                    //annotationNode.scaleRelativeToDistance = true
+                    self.sceneLocationView.addLocationNodeWithConfirmedLocation(locationNode: annotationNode)
+                    
+                }
+                
             }
             
         }
-            
         
        
-        for event in EventStore.shared.events {
-            var lat = Double( event.latitude! )!
-            var lon = Double( event.longititude! )!
-            let title = event.title!
-                        
-            let coordinate = CLLocationCoordinate2D(latitude: lat, longitude: lon)
-
-            let location = CLLocation(coordinate: coordinate, altitude: 300)
-            //let image = UIImage(systemName: "eye")!
-            let eventLabel = UIView.prettyLabeledView(
-                text: title, backgroundColor: .white, textColor: .black)
-            let annotationNode = LocationAnnotationNode(location: location, view: eventLabel)
-            // this works, but makes the icons so tiny you cant see them, need to increase scale
-            //annotationNode.scaleRelativeToDistance = true
-            sceneLocationView.addLocationNodeWithConfirmedLocation(locationNode: annotationNode)
-            
-        }
+    
         
         
 //        for event in locationArray {
