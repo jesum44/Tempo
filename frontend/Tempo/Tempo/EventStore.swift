@@ -85,21 +85,21 @@ final class EventStore {
                 }
                 print("!!!!!!!!!!")
                 print(jsonObj["events"])
-                let eventsReceived = jsonObj["events"] as? [[String?]] ?? []
+                let eventsReceived = jsonObj["events"] as? [[Any]] ?? []
                 print(eventsReceived)
                 self.events = [Event]()
                 for eventEntry in eventsReceived {
                     print("hi")
                     print(eventEntry)
                     if eventEntry.count == self.nFields {
-                        self.events.append(Event(event_id: eventEntry[0],
-                                            title: eventEntry[1],
-                                            address: eventEntry[2],
-                                                 latitude: eventEntry[3],
-                                                 longititude: eventEntry[4],
-                                                 start_time: eventEntry[5],
-                                                end_time:  eventEntry[6],
-                                                description: eventEntry[7]))
+                        self.events.append(Event(event_id: eventEntry[0] as! String?,
+                                                 title: eventEntry[1] as! String?,
+                                                 address: eventEntry[2] as! String?,
+                                                 latitude: eventEntry[3] as! String?,
+                                                 longititude: eventEntry[4] as! String?,
+                                                 start_time: eventEntry[5] as! String?,
+                                                 end_time:  eventEntry[6] as! String?,
+                                                 description: eventEntry[7] as! String?))
                     } else {
                         print("getEvents: Received unexpected number of fields: \(eventEntry.count) instead of \(self.nFields).")
                     }
