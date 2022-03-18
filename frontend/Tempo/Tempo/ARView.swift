@@ -137,6 +137,7 @@ class ARView: UIViewController, CLLocationManagerDelegate {
                     print("GET nearbyEvents had error!")
                     return
                 }
+                print("res below")
                 print(res ?? ":(")
             }
         }
@@ -151,12 +152,13 @@ class ARView: UIViewController, CLLocationManagerDelegate {
         
         
         
-        let locationArray: [[String]] = [
+        var locationArray: [[String]] = [
             ["42.2768206", "83.745065", "Pizza Party"],
             ["47.2768209", "83.745065", "Board Games"],
             ["42.295904", "-83.719227", "Jam Sesh"],
             ["42.293904", "-83.720686", "Free Food"],
         ]
+        //var locationArray = EventStore.shared.events;
         
         for event in locationArray {
             let lat = Double(event[0])!
