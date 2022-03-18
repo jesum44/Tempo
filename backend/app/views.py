@@ -50,9 +50,9 @@ def events(request):
         results = int(request.GET.get('results'))
 
         cursor = connection.cursor()
-        cursor.execute('SELECT x.event_id, title, x.lat, x.lon FROM'
+        cursor.execute('SELECT x.event_id, title, x.address, x.lat, x.lon, x.start_time, x.start_time, x.description FROM'
                        '('
-                         'SELECT event_id, title, lat, lon, '
+                         'SELECT event_id, title, address, lat, lon, start_time, end_time, description, '
                            'SQRT('
                              'POW(69.1 * (lat - %s), 2) + '
                              'POW(69.1 * (%s - lon) * COS(lat / 57.3), 2)'
@@ -60,13 +60,13 @@ def events(request):
                            'AS distance '
                            'FROM events '
                        ') AS x '
-                       'WHERE x.distance < 25 '
+                       'WHERE x.distance < 10000 '
                        'ORDER BY x.distance LIMIT %s;',
                        (start_lat, start_lon, results))
 
-        columns = [col[0] for col in cursor.description]
-        nearby_events = [ dict(zip(columns, row)) for row in cursor.fetchall() ]
-        # nearby_events = cursor.fetchall()
+        # columns = [col[0] for col in cursor.description]
+        # nearby_events = [ dict(zip(columns, row)) for row in cursor.fetchall() ]
+        nearby_events = cursor.fetchall()
 
         response = {}
         response['events'] = nearby_events
