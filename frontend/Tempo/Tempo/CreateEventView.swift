@@ -10,7 +10,6 @@ import UIKit
 import SwiftUI // the form is made in SwiftUI, and embedded into UIKit's UIViewController
 import SwiftyJSON
 
-// var VIEW: UIViewController? = nil; // used to launch popups in subfunctions
 
 class CreateEventView: UIViewController {
     
@@ -71,8 +70,8 @@ struct FormView: View {
     @State var address: String = ""
 
     @State var startTime = Date()
-    // endTime init'ed as 1 year from now
-    @State var endTime = Calendar.current.date(byAdding: .year, value: 1, to: Date())!
+    // endTime init'ed as 1 hour from now
+    @State var endTime = Calendar.current.date(byAdding: .hour, value: 1, to: Date())!
     
     @State var categoriesSelected: String = "" // might be extended into a list of Strings later
     var categoryOptions = [
@@ -97,6 +96,9 @@ struct FormView: View {
         "Travel & Outdoor",
         "Writing"
     ]
+    
+    @State var errorMessage = ""
+    
     
     var body: some View {
         NavigationView {
@@ -124,6 +126,12 @@ struct FormView: View {
                                displayedComponents: [.date, .hourAndMinute])
                     DatePicker("Ends At", selection: $endTime,
                                displayedComponents: [.date, .hourAndMinute])
+                }
+                if errorMessage != "" {
+                    Section {
+                        Text(errorMessage)
+                            .foregroundColor(.red)
+                    }
                 }
                 Section {
                     HStack {
@@ -153,21 +161,31 @@ struct FormView: View {
                                     
                                 ]
                                     
-                                await makeCreateEventPostRequest(parameters)
-                                
-                                // close view and return to previous view
-                                self.delegate.dismiss()
+                                let err = await makeCreateEventPostRequest(parameters)
+                                // show error if one occured
+                                if !err.isEmpty {
+                                    if err[0] == "Status Code" {
+                                        errorMessage = "Invalid Address!\nPlease try again!"
+                                    } else {
+                                        errorMessage = "Something went wrong!\nPlease try again!"
+                                    }
+                                } else {
+                                    // if no error, close view and return to previous view
+                                    self.delegate.dismiss()
+                                }
                             }
                         }
+                        
                         Spacer()
                     }
                 }
+                
             }
             .navigationBarTitle("Create Event")
+            
         }
     }
 }
-
 
 
 // dismiss CreateEventView from within the SwiftUI Form
@@ -184,14 +202,15 @@ class SheetDismisserProtocol: ObservableObject {
 // Alamofire wasn't working so I had to do this the hard way
 // Make sure parameters does not have Any in the type declaration or else
 //      it can't be json-encoded
-func makeCreateEventPostRequest(_ parameters: [String: String]) async {
+// return array of strings to allow basic error handling -> empty means no error
+func makeCreateEventPostRequest(_ parameters: [String: String]) async -> [String] {
     // TODO: replace this with what the backend team provides
     //let url = "https://ptsv2.com/t/13soj-1647428183/post"
-    let url = "https://54.175.206.175/events"
+    let url = "https://54.175.206.175/events/"
     
     guard let encoded = try? JSONEncoder().encode(parameters) else {
         print("JSONEncoder error")
-        return
+        return ["Json Encoding"]
     }
     
     var request = URLRequest(url: URL(string: url)!)
@@ -200,16 +219,19 @@ func makeCreateEventPostRequest(_ parameters: [String: String]) async {
     
     do {
         let (data, res) = try await URLSession.shared.upload(for: request, from: encoded)
-        print(res)
+        let httpRes = res as! HTTPURLResponse
+        if httpRes.statusCode != 201 {
+            print("POST request status code was not 201! It was \(httpRes.statusCode)")
+            return ["Status Code", "\(httpRes.statusCode)"]
+        }
     } catch {
         print("POST Request error")
+        return ["Post Request"]
     }
+    
+    // no errors, everything worked, return [false]
+    return []
 }
 
 
-func makePopup(title: String, message: String) -> UIAlertController {
-    let popup = UIAlertController(
-        title: title, message: message, preferredStyle: .alert)
-    popup.addAction(UIAlertAction(title: "OK", style: .default))
-    return popup
-}
+
