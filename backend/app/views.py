@@ -13,6 +13,74 @@ import geocoder
 from datetime import datetime
 # Create your views here.
 
+
+@csrf_exempt
+def events_detail(request, slug):
+    if request.method == 'GET':
+        cursor = connection.cursor()
+        cursor.execute(
+                         '''SELECT event_id, title, address, lat, lon, start_time, end_time, description FROM events WHERE event_id = %s;''', [slug]
+                    )
+
+        events = cursor.fetchall()
+        if not events:
+            return HttpResponse(status=404)
+        response = {
+                "events" : events
+                }
+        return JsonResponse(response)
+    elif request.method == 'PUT':
+        cursor = connection.cursor()
+        cursor.execute(
+                         '''SELECT event_id, title, address, lat, lon, start_time, end_time, description FROM events WHERE event_id = %s;''', [slug]
+                    )
+
+        events = cursor.fetchall()
+        if not events:
+            return HttpResponse(status=404)
+
+        json_data = json.loads(request.body)
+
+        event_id = slug
+
+        user_id = json_data['user_id']
+        title = json_data['title']
+        description = json_data['description']
+        address = json_data['address']
+
+        g = geocoder.osm(address)
+        if not g.ok:
+            return HttpResponse(status=400)
+
+        lat = g.lat
+        lon = g.lng
+
+        start_time = datetime.fromtimestamp(int(json_data['start_time']))
+        end_time = datetime.fromtimestamp(int(json_data['end_time']))
+
+        cursor = connection.cursor()
+        cursor.execute(''' UPDATE events SET title = %s, description = %s, address = %s, lat = %s, lon = %s, start_time = %s, end_time = %s  WHERE event_id = %s;  ''', [title, description, address, lat, lon, start_time, end_time, slug])
+
+        return HttpResponse(status=200)
+    elif request.method == 'DELETE':
+        cursor = connection.cursor()
+        cursor.execute(
+                         '''SELECT event_id, title, address, lat, lon, start_time, end_time, description FROM events WHERE event_id = %s;''', [slug]
+                    )
+
+        events = cursor.fetchall()
+        if not events:
+            return HttpResponse(status=404)
+
+        cursor.execute(
+                '''DELETE FROM events WHERE event_id=%s; ''', [slug]    
+                )
+        return HttpResponse(status=200)
+    else:
+        return HttpResponse(status=404)
+
+
+
 # TODO: remove csrf exempt decorator if we can figure out how
 @csrf_exempt
 def events(request):
