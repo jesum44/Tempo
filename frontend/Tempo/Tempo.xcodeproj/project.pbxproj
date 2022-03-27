@@ -11,6 +11,8 @@
 		4428AF3927E1B94000248B2E /* CreateEvent.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4428AF3827E1B94000248B2E /* CreateEvent.storyboard */; };
 		4428AF3B27E22ECA00248B2E /* Event.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4428AF3A27E22ECA00248B2E /* Event.swift */; };
 		4428AF3D27E22EDB00248B2E /* EventStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4428AF3C27E22EDB00248B2E /* EventStore.swift */; };
+		448E2E9127EFF0BB0028E11E /* EventInfoView.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 448E2E9027EFF0BB0028E11E /* EventInfoView.storyboard */; };
+		448E2E9327EFF2C60028E11E /* EventInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 448E2E9227EFF2C60028E11E /* EventInfoView.swift */; };
 		7657E88927E2D73D001A785F /* MapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7657E88827E2D73D001A785F /* MapView.swift */; };
 		7657E88D27E2DA95001A785F /* CreateEventsButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7657E88C27E2DA95001A785F /* CreateEventsButton.swift */; };
 		7657E88F27E3C4D3001A785F /* createToggle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7657E88E27E3C4D3001A785F /* createToggle.swift */; };
@@ -29,6 +31,8 @@
 		4428AF3827E1B94000248B2E /* CreateEvent.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = CreateEvent.storyboard; sourceTree = "<group>"; };
 		4428AF3A27E22ECA00248B2E /* Event.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Event.swift; sourceTree = "<group>"; };
 		4428AF3C27E22EDB00248B2E /* EventStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventStore.swift; sourceTree = "<group>"; };
+		448E2E9027EFF0BB0028E11E /* EventInfoView.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = EventInfoView.storyboard; sourceTree = "<group>"; };
+		448E2E9227EFF2C60028E11E /* EventInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventInfoView.swift; sourceTree = "<group>"; };
 		6778FDDCCD0527B18953FE2D /* Pods-Tempo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Tempo.release.xcconfig"; path = "Target Support Files/Pods-Tempo/Pods-Tempo.release.xcconfig"; sourceTree = "<group>"; };
 		7657E88827E2D73D001A785F /* MapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapView.swift; sourceTree = "<group>"; };
 		7657E88C27E2DA95001A785F /* CreateEventsButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateEventsButton.swift; sourceTree = "<group>"; };
@@ -98,6 +102,8 @@
 				EB6ECB1827E019550040C0E2 /* ViewController.swift */,
 				4428AF3827E1B94000248B2E /* CreateEvent.storyboard */,
 				4428AF3627E1B92D00248B2E /* CreateEventView.swift */,
+				448E2E9027EFF0BB0028E11E /* EventInfoView.storyboard */,
+				448E2E9227EFF2C60028E11E /* EventInfoView.swift */,
 				EB6ECB1D27E019580040C0E2 /* Assets.xcassets */,
 				EB6ECB1F27E019580040C0E2 /* LaunchScreen.storyboard */,
 				EB6ECB2227E019580040C0E2 /* Info.plist */,
@@ -172,6 +178,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				448E2E9127EFF0BB0028E11E /* EventInfoView.storyboard in Resources */,
 				EB6ECB2127E019580040C0E2 /* LaunchScreen.storyboard in Resources */,
 				4428AF3927E1B94000248B2E /* CreateEvent.storyboard in Resources */,
 				EB6ECB1E27E019580040C0E2 /* Assets.xcassets in Resources */,
@@ -237,6 +244,7 @@
 				EB6ECB1527E019550040C0E2 /* AppDelegate.swift in Sources */,
 				7657E89327E3C827001A785F /* MapView2.swift in Sources */,
 				4428AF3B27E22ECA00248B2E /* Event.swift in Sources */,
+				448E2E9327EFF2C60028E11E /* EventInfoView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

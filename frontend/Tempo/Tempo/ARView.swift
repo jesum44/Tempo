@@ -94,13 +94,28 @@ class ARView: UIViewController, CLLocationManagerDelegate {
     }
     
     @objc func createEventButtonTapped(sender: UIButton!){
-        // get CreateEvent.storyboard
-        let storyboard = UIStoryboard(name: "CreateEvent", bundle: nil)
-        // click on the storyboard file, click the correct view, and give it the same
-        // Storyboard ID as below
-        let vc = storyboard.instantiateViewController(
-            withIdentifier: "CreateEventStoryboardID") as! CreateEventView
+//        // get CreateEvent.storyboard
+//        let storyboard = UIStoryboard(name: "CreateEvent", bundle: nil)
+//        // click on the storyboard file, click the correct view, and give it the same
+//        // Storyboard ID as below
+//        let vc = storyboard.instantiateViewController(
+//            withIdentifier: "CreateEventStoryboardID") as! CreateEventView
+        
+        // Temporary code to test out event info view
+        let storyboard = UIStoryboard(name: "EventInfoView", bundle: nil)
+        let vc = storyboard.instantiateViewController(withIdentifier: "EventInfoViewStoryboardID") as! EventInfoView
+        
         let navController = UINavigationController(rootViewController: vc)
+        
+        // make modal half screen, comment this if statement out for full screen
+        // https://stackoverflow.com/a/67988976
+        if let pc =
+            navController.presentationController
+                as? UISheetPresentationController {
+
+            pc.detents = [.medium()]
+        }
+        
         self.present(navController, animated: true, completion: nil)
         
         //this was the previous way I opened the CreateEventView
