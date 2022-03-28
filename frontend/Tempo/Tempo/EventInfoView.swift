@@ -37,9 +37,7 @@ class EventInfoView: UIViewController {
         // https://stackoverflow.com/a/59348371
         let delegate = SheetDismisserProtocol()
         
-        let mockEvent = Event(event_id: "123456abc", title: "Shrek's Grad Party", address: "987 Swamp Street Ann Arbor, MI", latitude: "42.2768206", longititude: "-83.729657", start_time: "1648408690", end_time: "1648408690", description: "Food & Drinks provided. Live music by Smash Mouth.")
-        
-        let eventInfoView = SwiftUIEventInfoView(delegate: delegate, event: mockEvent)
+        let eventInfoView = SwiftUIEventInfoView(delegate: delegate)
         let eventInfoViewController = UIHostingController(rootView: AnyView(eventInfoView))
         delegate.host = eventInfoViewController
         
@@ -72,20 +70,21 @@ let vstackSpacing = 20.0;
 struct SwiftUIEventInfoView: View {
     // for dismissing the view
     @ObservedObject var delegate: SheetDismisserProtocol
-    var event: Event
+    // the event that has been most recently tapped
+    var event: Event = GLOBAL_CURRENT_EVENT
     
     @State private var isShareViewPresented: Bool = false
     
     var body: some View {
         NavigationView {
-            HStack(alignment: .top) {
+            VStack {
                 VStack(spacing: vstackSpacing) {
                     HStack {
                         Spacer().frame(width: sideSpacerWidth)
                         // title
                         VStack(alignment: .leading) {
                             Text(event.title!)
-                                .font(.largeTitle)
+                                .font(.title)
                         }
                         Spacer()
                         // share button
@@ -126,7 +125,7 @@ struct SwiftUIEventInfoView: View {
                         Spacer().frame(width: sideSpacerWidth)
                         // time
                         VStack(alignment: .leading) {
-                            Text(formatTimestamp(event.start_time!))
+                            Text(formatTimeString(event.start_time!))
                         }
                         Spacer()
                         // delete button
@@ -190,14 +189,26 @@ func deleteEvent(_ eventID: String) {
     print("event being deleted ~ \(eventID)")
 }
 
-func formatTimestamp(_ timestamp: String) -> String {
-    let date = Date(timeIntervalSince1970: Double(timestamp)!)
+
+// seems like the api returns iso8601 timestrings not millisecond timestamps
+func formatTimeString(_ timeString: String) -> String {
+    print(timeString)
+    
+    var newTimeString = timeString
+    // if the timestrings are missing the 'Z' at the end then add that in manually
+    if !timeString.hasSuffix("Z") {
+        newTimeString += "Z"
+    }
+    
+    let dateParser = ISO8601DateFormatter()
+    let date = dateParser.date(from: newTimeString)
+    
     let dateFormatter = DateFormatter()
     dateFormatter.locale = NSLocale.current
-    dateFormatter.dateFormat = "h:mm a" // something like '3:18 PM'
+    dateFormatter.dateFormat = "h:mm a 'on' M/dd/yyyy" // something like '3:18 PM on 3/28/22'
     dateFormatter.amSymbol = "AM"
     dateFormatter.pmSymbol = "PM"
-    return dateFormatter.string(from: date)
+    return dateFormatter.string(from: date!)
 }
 
 
@@ -219,22 +230,19 @@ func openMapsAndGetDirections(_ address: String, _ lat: String, _ lon: String) {
 }
 
 
-// https://swifttom.com/2020/02/06/how-to-share-content-in-your-app-using-uiactivityviewcontroller-in-swiftui/
 func getShareEventMessage(_ event: Event) -> String {
-    // I just copied what we put in the Figma
-    let nameOfInviter = "Krithik"
-    let shareURL = "https://tempo.com/super-smash-bros-tournament/"
+    // I just copied most of what we put in the Figma
     
     return (
-        "\(nameOfInviter) is inviting you to:"
-        + "\nEvent: \(event.title!)"
-        + "\nTime: \(formatTimestamp(event.start_time!))"
+        "Event: \(event.title!)"
+        + "\nTime: \(formatTimeString(event.start_time!))"
         + "\nDescription: \(event.description!)"
-        + "\n\n\(shareURL)"
     )
 }
 
 
+// creates share event modal
+// https://swifttom.com/2020/02/06/how-to-share-content-in-your-app-using-uiactivityviewcontroller-in-swiftui/
 struct ActivityViewController: UIViewControllerRepresentable {
 
     var itemsToShare: [Any]

@@ -11,7 +11,7 @@ target 'Tempo' do
   pod 'ARCL'
   
   # HTTP requests
-  # pod 'Alamofire', '~> 5.5'
+  pod 'Alamofire', '~> 5.5'
 
   # easier JSON handling
   pod 'SwiftyJSON', '~> 4.0'

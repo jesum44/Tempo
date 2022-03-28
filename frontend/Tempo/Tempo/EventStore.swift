@@ -15,7 +15,7 @@ final class EventStore {
     var events = [Event]()
     private let nFields = Mirror(reflecting: Event()).children.count
 
-    private let serverUrl = "https://54.175.206.175/"
+    let serverUrl = "https://54.175.206.175/"
 
     
     func postEvent(_ event: Event) {
