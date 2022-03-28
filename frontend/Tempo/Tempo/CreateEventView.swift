@@ -170,7 +170,9 @@ struct FormView: View {
                                         errorMessage = "Something went wrong!\nPlease try again!"
                                     }
                                 } else {
-                                    // if no error, close view and return to previous view
+                                    // if no error, refresh events from database
+                                    GLOBAL_AR_VIEW?.getNearbyEvents(nil)
+                                    // then close view and return to previous view
                                     self.delegate.dismiss()
                                 }
                             }

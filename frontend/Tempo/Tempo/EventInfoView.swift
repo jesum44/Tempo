@@ -9,6 +9,7 @@ import Foundation
 import UIKit
 import SwiftUI // the form is made in SwiftUI, and embedded into UIKit's UIViewController
 import SwiftyJSON
+import Alamofire
 
 
 
@@ -131,7 +132,7 @@ struct SwiftUIEventInfoView: View {
                         // delete button
                         VStack(alignment: .trailing) {
                             Button("Delete Event") {
-                                deleteEvent(event.event_id!)
+                                deleteEvent(eventID: event.event_id!, delegate: self.delegate)
                             }
                         }
                         Spacer().frame(width: sideSpacerWidth)
@@ -177,6 +178,7 @@ struct SwiftUIEventInfoView: View {
 
 
 
+// NOT DONE
 func editEvent(_ eventID: String) {
     // add event editing stuff here
     print("event being edited ~ \(eventID)")
@@ -184,9 +186,20 @@ func editEvent(_ eventID: String) {
     // should probably call deleteEvent() + createEvent()
 }
 
-func deleteEvent(_ eventID: String) {
-    // add event deleting stuff here
-    print("event being deleted ~ \(eventID)")
+func deleteEvent(eventID: String, delegate: SheetDismisserProtocol) {
+    // delete event from database with DELETE http request
+    let url = "https://54.175.206.175/events/" + eventID
+    AF.request(url, method: .delete).response { res in
+        debugPrint(res)
+    }
+    
+    // call getNearbyEvents to refresh visible popups
+    GLOBAL_AR_VIEW?.getNearbyEvents(nil)
+    
+    print("event deleted ~ \(eventID)")
+    
+    // close modal
+    delegate.dismiss()
 }
 
 

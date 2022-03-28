@@ -26,6 +26,9 @@ import Alamofire
 // change this value whenever an event is clicked so it can be used for the modal
 var GLOBAL_CURRENT_EVENT = Event(event_id: "123456abc", title: "Shrek's Grad Party", address: "987 Swamp Street Ann Arbor, MI", latitude: "42.2768206", longititude: "-83.729657", start_time: "1648408690", end_time: "1648408690", description: "Food & Drinks provided. Live music by Smash Mouth.")
 
+// use this to call getNearbyEvents in other files
+var GLOBAL_AR_VIEW: ARView? = nil
+
 
 class ARView: UIViewController, CLLocationManagerDelegate {
     var sceneLocationView = SceneLocationView()
@@ -39,6 +42,8 @@ class ARView: UIViewController, CLLocationManagerDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        GLOBAL_AR_VIEW = self;
         
         locmanager.delegate = self
         locmanager.desiredAccuracy = kCLLocationAccuracyBest
@@ -137,7 +142,7 @@ class ARView: UIViewController, CLLocationManagerDelegate {
     
 
     
-    private func getNearbyEvents(_ sender: UIAction?) {
+    func getNearbyEvents(_ sender: UIAction?) {
         print("getNearbyEventsCalled")
         var locManager = CLLocationManager()
         locManager.requestWhenInUseAuthorization()
@@ -151,6 +156,8 @@ class ARView: UIViewController, CLLocationManagerDelegate {
                 return
             }
             
+            // remove all pre-existing popups for use by delete/edit events functions
+            self.sceneLocationView.removeAllNodes()
             
             // Make a call to eventStore.shared.getEvents
             // That call will populate the events array with all the relevent data
