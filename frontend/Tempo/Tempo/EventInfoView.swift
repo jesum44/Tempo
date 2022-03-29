@@ -59,6 +59,7 @@ class EventInfoView: UIViewController {
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
     }
+    
 }
 
 // spacing on left/right sides of ui
@@ -75,6 +76,7 @@ struct SwiftUIEventInfoView: View {
     var event: Event = GLOBAL_CURRENT_EVENT
     
     @State private var isShareViewPresented: Bool = false
+    @State var toDeleteEvent: Int? = nil
     
     var body: some View {
         NavigationView {
@@ -131,9 +133,12 @@ struct SwiftUIEventInfoView: View {
                         Spacer()
                         // delete button
                         VStack(alignment: .trailing) {
-                            Button("Delete Event") {
-                                deleteEvent(eventID: event.event_id!, delegate: self.delegate)
+                            NavigationLink(destination: SwiftUIDeleteEventView(delegate: delegate), tag: 1, selection: $toDeleteEvent) {
+                                Button("Delete Event") {
+                                    self.toDeleteEvent = 1
+                                }
                             }
+
                         }
                         Spacer().frame(width: sideSpacerWidth)
                     }
@@ -184,22 +189,7 @@ func editEvent(_ eventID: String) {
     print("event being edited ~ \(eventID)")
     
     // should probably call deleteEvent() + createEvent()
-}
 
-func deleteEvent(eventID: String, delegate: SheetDismisserProtocol) {
-    // delete event from database with DELETE http request
-    let url = "https://54.175.206.175/events/" + eventID
-    AF.request(url, method: .delete).response { res in
-        debugPrint(res)
-    }
-    
-    // call getNearbyEvents to refresh visible popups
-    GLOBAL_AR_VIEW?.getNearbyEvents(nil)
-    
-    print("event deleted ~ \(eventID)")
-    
-    // close modal
-    delegate.dismiss()
 }
 
 
