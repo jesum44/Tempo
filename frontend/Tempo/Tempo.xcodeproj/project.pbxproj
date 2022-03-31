@@ -18,6 +18,8 @@
 		7657E88F27E3C4D3001A785F /* createToggle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7657E88E27E3C4D3001A785F /* createToggle.swift */; };
 		7657E89327E3C827001A785F /* MapView2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7657E89227E3C827001A785F /* MapView2.swift */; };
 		8A4C804727F270CE00E614BF /* DeleteEventView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A4C804627F270CE00E614BF /* DeleteEventView.swift */; };
+		8A73F14127F5392D00915F9F /* EditEventView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A73F14027F5392D00915F9F /* EditEventView.swift */; };
+		8A73F14327F54A3400915F9F /* extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A73F14227F54A3400915F9F /* extensions.swift */; };
 		E8E99D53F2BA7AADFA6DBD68 /* Pods_Tempo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA9B5103267BBE2B9EF6BB44 /* Pods_Tempo.framework */; };
 		EB6ECB1527E019550040C0E2 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB6ECB1427E019550040C0E2 /* AppDelegate.swift */; };
 		EB6ECB1927E019550040C0E2 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB6ECB1827E019550040C0E2 /* ViewController.swift */; };
@@ -40,6 +42,8 @@
 		7657E88E27E3C4D3001A785F /* createToggle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = createToggle.swift; sourceTree = "<group>"; };
 		7657E89227E3C827001A785F /* MapView2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapView2.swift; sourceTree = "<group>"; };
 		8A4C804627F270CE00E614BF /* DeleteEventView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteEventView.swift; sourceTree = "<group>"; };
+		8A73F14027F5392D00915F9F /* EditEventView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditEventView.swift; sourceTree = "<group>"; };
+		8A73F14227F54A3400915F9F /* extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = extensions.swift; sourceTree = "<group>"; };
 		AA9B5103267BBE2B9EF6BB44 /* Pods_Tempo.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Tempo.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EB6ECB1127E019550040C0E2 /* Tempo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Tempo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		EB6ECB1427E019550040C0E2 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -104,6 +108,7 @@
 				EB6ECB1827E019550040C0E2 /* ViewController.swift */,
 				4428AF3827E1B94000248B2E /* CreateEvent.storyboard */,
 				4428AF3627E1B92D00248B2E /* CreateEventView.swift */,
+				8A73F14027F5392D00915F9F /* EditEventView.swift */,
 				8A4C804627F270CE00E614BF /* DeleteEventView.swift */,
 				448E2E9027EFF0BB0028E11E /* EventInfoView.storyboard */,
 				448E2E9227EFF2C60028E11E /* EventInfoView.swift */,
@@ -117,6 +122,7 @@
 				7657E88827E2D73D001A785F /* MapView.swift */,
 				7657E89227E3C827001A785F /* MapView2.swift */,
 				7657E88E27E3C4D3001A785F /* createToggle.swift */,
+				8A73F14227F54A3400915F9F /* extensions.swift */,
 			);
 			path = Tempo;
 			sourceTree = "<group>";
@@ -240,9 +246,11 @@
 				7657E88D27E2DA95001A785F /* CreateEventsButton.swift in Sources */,
 				7657E88927E2D73D001A785F /* MapView.swift in Sources */,
 				7657E88F27E3C4D3001A785F /* createToggle.swift in Sources */,
+				8A73F14327F54A3400915F9F /* extensions.swift in Sources */,
 				EB6ECB1927E019550040C0E2 /* ViewController.swift in Sources */,
 				8A4C804727F270CE00E614BF /* DeleteEventView.swift in Sources */,
 				4428AF3727E1B92D00248B2E /* CreateEventView.swift in Sources */,
+				8A73F14127F5392D00915F9F /* EditEventView.swift in Sources */,
 				4428AF3D27E22EDB00248B2E /* EventStore.swift in Sources */,
 				EB6ECB2927E01CBD0040C0E2 /* ARView.swift in Sources */,
 				EB6ECB1527E019550040C0E2 /* AppDelegate.swift in Sources */,

@@ -19,10 +19,10 @@ class EventInfoView: UIViewController {
     @objc func closeView(sender: UIButton!) {
         self.dismiss(animated: true, completion: nil)
     }
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         // add x button to top right in case user's don't want to create event
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(
             barButtonSystemItem: .close, target: self, action: #selector(self.closeView))
@@ -44,18 +44,18 @@ class EventInfoView: UIViewController {
         
         if let eiView = eventInfoViewController.view {
             eiView.translatesAutoresizingMaskIntoConstraints = false
-
+            
             view.addSubview(eiView)
             eiView.topAnchor.constraint(equalTo: view.topAnchor, constant: 0).isActive = true
             eiView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: 0).isActive = true
             eiView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 0).isActive = true
             eiView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 0).isActive = true
-
+            
             self.addChild(eventInfoViewController)
         }
         
     }
-
+    
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
     }
@@ -77,6 +77,7 @@ struct SwiftUIEventInfoView: View {
     
     @State private var isShareViewPresented: Bool = false
     @State var toDeleteEvent: Int? = nil
+    @State var toEditEvent: Int? = nil
     
     var body: some View {
         NavigationView {
@@ -87,7 +88,9 @@ struct SwiftUIEventInfoView: View {
                         // title
                         VStack(alignment: .leading) {
                             Text(event.title!)
-                                .font(.title)
+                                .font(.largeTitle.bold())
+                                .foregroundColor(.red)
+                                .padding(.bottom, 5)
                         }
                         Spacer()
                         // share button
@@ -96,6 +99,7 @@ struct SwiftUIEventInfoView: View {
                                 self.isShareViewPresented = true
                             }) {
                                 Label("", systemImage: "paperplane")
+                                    .font(.title)
                             }
                             .sheet(isPresented: $isShareViewPresented, onDismiss: {
                                 print("Share Sheet Dismissed")
@@ -117,9 +121,12 @@ struct SwiftUIEventInfoView: View {
                         Spacer()
                         // edit button
                         VStack(alignment: .trailing) {
-                            Button("Edit Event") {
-                                editEvent(event.event_id!)
-                            }
+                                NavigationLink(destination: SwiftUIEditEventView(delegate: delegate), tag: 1, selection: $toEditEvent) {
+                                    Button("Edit Event") {
+                                        self.toEditEvent = 1
+                                    }
+                                }
+                            .font(.title3)
                         }
                         Spacer().frame(width: sideSpacerWidth)
                     }
@@ -138,7 +145,7 @@ struct SwiftUIEventInfoView: View {
                                     self.toDeleteEvent = 1
                                 }
                             }
-
+                            
                         }
                         Spacer().frame(width: sideSpacerWidth)
                     }
@@ -149,6 +156,7 @@ struct SwiftUIEventInfoView: View {
                         // description
                         VStack(alignment: .leading, spacing: vstackSpacing) {
                             Text(event.description!)
+                                .padding(.bottom, 50)
                         }
                         // no width to push description to left just like in Figma
                         Spacer()
@@ -158,25 +166,29 @@ struct SwiftUIEventInfoView: View {
                         Spacer().frame(width: sideSpacerWidth)
                         
                         // directions button
-                        Button("Directions") {
+                        Button(action: {
                             openMapsAndGetDirections(
                                 event.address!,
                                 event.latitude!,
                                 event.longititude!
                             )
+                        }) {
+                            Text("Directions")
+                                .frame(minWidth: 100, maxWidth: .infinity, minHeight: 60, maxHeight: 60, alignment: .center)
+                                .buttonStyle(PlainButtonStyle())
+                                .background(.black)
+                                .foregroundColor(.white)
+                                .cornerRadius(5)
+                                .font(.title3.bold())
+                                .padding(.bottom, 150)
                         }
-                        .frame(maxWidth: .infinity, minHeight: 40) // extend across screen horizontally
-                        .buttonStyle(PlainButtonStyle())
-                        .background(.blue)
-                        .foregroundColor(.white)
-                        .cornerRadius(5)
                         
                         
                         Spacer().frame(width: sideSpacerWidth)
                     }
                 }
+                Spacer()
             }
-            Spacer()
         }
     }
 }
@@ -189,7 +201,7 @@ func editEvent(_ eventID: String) {
     print("event being edited ~ \(eventID)")
     
     // should probably call deleteEvent() + createEvent()
-
+    
 }
 
 
@@ -247,15 +259,15 @@ func getShareEventMessage(_ event: Event) -> String {
 // creates share event modal
 // https://swifttom.com/2020/02/06/how-to-share-content-in-your-app-using-uiactivityviewcontroller-in-swiftui/
 struct ActivityViewController: UIViewControllerRepresentable {
-
+    
     var itemsToShare: [Any]
     var servicesToShareItem: [UIActivity]? = nil
-
+    
     func makeUIViewController(context: UIViewControllerRepresentableContext<ActivityViewController>) -> UIActivityViewController {
         let controller = UIActivityViewController(activityItems: itemsToShare, applicationActivities: servicesToShareItem)
         return controller
     }
-
+    
     func updateUIViewController(_ uiViewController: UIActivityViewController, context: UIViewControllerRepresentableContext<ActivityViewController>) {}
-
+    
 }
