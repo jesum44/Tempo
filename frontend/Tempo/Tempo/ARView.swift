@@ -29,7 +29,6 @@ var GLOBAL_CURRENT_EVENT = Event(event_id: "123456abc", title: "Shrek's Grad Par
 // use this to call getNearbyEvents in other files
 var GLOBAL_AR_VIEW: ARView? = nil
 
-
 class ARView: UIViewController, CLLocationManagerDelegate {
     var sceneLocationView = SceneLocationView()
     private let locmanager = CLLocationManager()
@@ -266,6 +265,7 @@ class ARView: UIViewController, CLLocationManagerDelegate {
             }
         }
     }
+    
 
 }
 
