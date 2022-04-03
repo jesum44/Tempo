@@ -76,7 +76,6 @@ struct SwiftUIEventInfoView: View {
     var event: Event = GLOBAL_CURRENT_EVENT
     
     @State private var isShareViewPresented: Bool = false
-    @State var toDeleteEvent: Int? = nil
     @State var toEditEvent: Int? = nil
     
     var body: some View {
@@ -138,15 +137,7 @@ struct SwiftUIEventInfoView: View {
                             Text(formatTimeString(event.start_time!))
                         }
                         Spacer()
-                        // delete button
-                        VStack(alignment: .trailing) {
-                            NavigationLink(destination: SwiftUIDeleteEventView(delegate: delegate), tag: 1, selection: $toDeleteEvent) {
-                                Button("Delete Event") {
-                                    self.toDeleteEvent = 1
-                                }
-                            }
-                            
-                        }
+                        
                         Spacer().frame(width: sideSpacerWidth)
                     }
                     

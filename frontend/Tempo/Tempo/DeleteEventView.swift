@@ -107,7 +107,6 @@ func deleteEvent(eventID: String, delegate: SheetDismisserProtocol) {
 
 func cancelDeletion(delegate: SheetDismisserProtocol) {
     // close modal
-    print("!!!!!!!!!!!!!!!!!!!")
     delegate.dismiss()
 }
 
