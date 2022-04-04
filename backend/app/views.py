@@ -26,16 +26,15 @@ def events_detail(request, slug):
         events = cursor.fetchall()
         if not events:
             return HttpResponse(status=404)
-        
-        if events['categories']:
-            events['categories'] = events['categories'].split('&')
-        else:
-            events['categories'] = []
 
-        response = {
-            "events" : events
-        }
-        return JsonResponse(response)
+        event_data = list(events[0])
+
+        if event_data[9]:
+            event_data[9] = event_data[9].split('&')
+        else:
+            event_data[9] = []
+
+        return JsonResponse({'event': event_data})
 
     elif request.method == 'PUT':
         cursor = connection.cursor()
