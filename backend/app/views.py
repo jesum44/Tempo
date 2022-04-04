@@ -29,6 +29,8 @@ def events_detail(request, slug):
         
         if events['categories']:
             events['categories'] = events['categories'].split('&')
+        else:
+            events['categories'] = []
 
         response = {
             "events" : events
