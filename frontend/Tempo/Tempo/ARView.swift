@@ -143,7 +143,7 @@ class ARView: UIViewController, CLLocationManagerDelegate {
     
     func getNearbyEvents(_ sender: UIAction?) {
         print("getNearbyEventsCalled")
-        var locManager = CLLocationManager()
+        let locManager = CLLocationManager()
         locManager.requestWhenInUseAuthorization()
         
         if (CLLocationManager.authorizationStatus() == CLAuthorizationStatus.authorizedWhenInUse

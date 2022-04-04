@@ -9,6 +9,8 @@ import Foundation
 import UIKit
 import SwiftUI
 import GoogleMaps
+import Alamofire
+import SwiftyJSON
 
 final class MapView:UIViewController, CLLocationManagerDelegate, GMSMapViewDelegate {
     private var mapView: GMSMapView!
@@ -40,11 +42,12 @@ final class MapView:UIViewController, CLLocationManagerDelegate, GMSMapViewDeleg
         var marker: GMSMarker!
         
         EventStore.shared.events.forEach {
-            var lat = Double( $0.latitude! )!
-            var lon = Double ($0.longitude! )!
+            let lat = Double( $0.latitude! )!
+            let lon = Double ($0.longitude! )!
             marker = GMSMarker(position: CLLocationCoordinate2D(latitude: lat, longitude: lon))
             marker.map = mapView
             marker.userData = $0
+//            marker.title = $0.title
         }
 
         // add "+" button to create an event
@@ -107,5 +110,50 @@ final class MapView:UIViewController, CLLocationManagerDelegate, GMSMapViewDeleg
         //self.present(vc, animated: true, completion: nil)
     }
     
+    func mapView(_ mapView: GMSMapView, didTap marker: GMSMarker) -> Bool {
+            
+        guard let event = marker.userData as? Event else {
+            return false
+        }
+
+        handleEventMarkerTapped(event: event)
+        return false
+    }
+    
+    
+    
+    // runs when a event popup is tapped
+    func handleEventMarkerTapped(event: Event) {
+        
+        // set global event to the one just tapped
+        GLOBAL_CURRENT_EVENT = Event(
+            event_id: event.event_id,
+            title: event.title,
+            address: event.address,
+            latitude: event.latitude,
+            longitude: event.longitude,
+            start_time: event.start_time,
+            end_time:  event.end_time,
+            description: event.description
+        )
+        
+        // now, launch the event info modal, filled with info about the global event
+        let storyboard = UIStoryboard(name: "EventInfoView", bundle: nil)
+        let vc = storyboard.instantiateViewController(withIdentifier: "EventInfoViewStoryboardID") as! EventInfoView
+        
+        let navController = UINavigationController(rootViewController: vc)
+        
+        // make modal half screen, comment this if statement out for full screen
+        // https://stackoverflow.com/a/67988976
+        if let pc =
+            navController.presentationController
+                as? UISheetPresentationController {
+
+            pc.detents = [.medium()]
+        }
+        
+        self.present(navController, animated: true, completion: nil)
+        
+    }
     
 }
