@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import GoogleMaps
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -21,6 +22,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             window.rootViewController = ARView()
             window.makeKeyAndVisible()
         }
+        
+        
+        GMSServices.provideAPIKey("AIzaSyAB5WgAXb6RgZUAbvMUSJZpQoNtoJ7AUoQ")
+        
         return true
     }
 

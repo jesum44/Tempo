@@ -89,7 +89,7 @@ final class EventStore {
                                                  title: eventEntry[1] as! String?,
                                                  address: eventEntry[2] as! String?,
                                                  latitude: "\(eventEntry[3])",
-                                                 longititude: "\(eventEntry[4])",
+                                                 longitude: "\(eventEntry[4])",
                                                  start_time: eventEntry[5] as! String?,
                                                  end_time:  eventEntry[6] as! String?,
                                                  description: eventEntry[7] as! String?))

@@ -161,7 +161,7 @@ struct SwiftUIEventInfoView: View {
                             openMapsAndGetDirections(
                                 event.address!,
                                 event.latitude!,
-                                event.longititude!
+                                event.longitude!
                             )
                         }) {
                             Text("Directions")

@@ -8,16 +8,44 @@
 import Foundation
 import UIKit
 import SwiftUI
+import GoogleMaps
 
-final class MapView:UIViewController {
+final class MapView:UIViewController, CLLocationManagerDelegate, GMSMapViewDelegate {
+    private var mapView: GMSMapView!
+    private let locManager = CLLocationManager()
+    
+    var event: Event? = nil
+    
     override func loadView(){
         print("in load view")
-        let mapView = MapView2()
+//        let mapView = MapView2()
+        mapView = GMSMapView()
         view = mapView
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        // Map Stuff
+        mapView.delegate = self
+        mapView.isMyLocationEnabled = true
+        mapView.settings.myLocationButton = true
+        
+        locManager.desiredAccuracy = kCLLocationAccuracyBest
+        
+        
+        locManager.delegate = self
+        locManager.startUpdatingLocation()
+        
+        var marker: GMSMarker!
+        
+        EventStore.shared.events.forEach {
+            var lat = Double( $0.latitude! )!
+            var lon = Double ($0.longitude! )!
+            marker = GMSMarker(position: CLLocationCoordinate2D(latitude: lat, longitude: lon))
+            marker.map = mapView
+            marker.userData = $0
+        }
 
         // add "+" button to create an event
         let buttonFactory = CreateEventsButton()
@@ -42,6 +70,16 @@ final class MapView:UIViewController {
         
         toggleContainer.addArrangedSubview(mapButton)
         toggleContainer.addArrangedSubview(ARButton)
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        guard let location = mapView.myLocation else {
+            return
+        }
+        
+        mapView.camera = GMSCameraPosition.camera(withTarget: location.coordinate, zoom: 16.0)
+        
+        manager.stopUpdatingLocation()
     }
     
     @objc func toggleAR(sender: UIButton!){

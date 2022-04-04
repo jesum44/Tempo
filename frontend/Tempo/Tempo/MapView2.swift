@@ -7,14 +7,15 @@
 
 import Foundation
 import UIKit
+import GoogleMaps
 
 class MapView2: UIView {
     override init(frame: CGRect){
         super.init(frame: CGRect(x: 0, y: 0, width:390, height: 844))
-        self.backgroundColor = .systemBackground
+        self.backgroundColor = .blue
         
     }
-    
+        
     required init?(coder: NSCoder) {
         fatalError("init(coder:) view deserialization not supported")
     }

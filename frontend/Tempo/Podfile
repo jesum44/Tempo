@@ -16,4 +16,7 @@ target 'Tempo' do
   # easier JSON handling
   pod 'SwiftyJSON', '~> 4.0'
 
+  # Google Maps
+  pod 'GoogleMaps'
+
 end

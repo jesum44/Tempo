@@ -24,7 +24,7 @@ import Alamofire
 
 
 // change this value whenever an event is clicked so it can be used for the modal
-var GLOBAL_CURRENT_EVENT = Event(event_id: "123456abc", title: "Shrek's Grad Party", address: "987 Swamp Street Ann Arbor, MI", latitude: "42.2768206", longititude: "-83.729657", start_time: "1648408690", end_time: "1648408690", description: "Food & Drinks provided. Live music by Smash Mouth.")
+var GLOBAL_CURRENT_EVENT = Event(event_id: "123456abc", title: "Shrek's Grad Party", address: "987 Swamp Street Ann Arbor, MI", latitude: "42.2768206", longitude: "-83.729657", start_time: "1648408690", end_time: "1648408690", description: "Food & Drinks provided. Live music by Smash Mouth.")
 
 // use this to call getNearbyEvents in other files
 var GLOBAL_AR_VIEW: ARView? = nil
@@ -168,7 +168,7 @@ class ARView: UIViewController, CLLocationManagerDelegate {
                 
                 for event in EventStore.shared.events {
                     let lat = Double( event.latitude! )!
-                    let lon = Double( event.longititude! )!
+                    let lon = Double( event.longitude! )!
                     let title = event.title!
                                 
                     let coordinate = CLLocationCoordinate2D(latitude: lat, longitude: lon)
@@ -239,7 +239,7 @@ class ARView: UIViewController, CLLocationManagerDelegate {
                         title: eventEntry[1].stringValue,
                         address: eventEntry[2].stringValue,
                         latitude: "\(eventEntry[3].stringValue)",
-                        longititude: "\(eventEntry[4].stringValue)",
+                        longitude: "\(eventEntry[4].stringValue)",
                         start_time: eventEntry[5].stringValue,
                         end_time:  eventEntry[6].stringValue,
                         description: eventEntry[7].stringValue
