@@ -1,6 +1,7 @@
 from audioop import add
 from operator import le
 from telnetlib import STATUS
+from unicodedata import category
 from django.shortcuts import render
 from django.http import JsonResponse, HttpResponse 
 from django.db import connection
@@ -19,21 +20,26 @@ def events_detail(request, slug):
     if request.method == 'GET':
         cursor = connection.cursor()
         cursor.execute(
-                         '''SELECT event_id, title, address, lat, lon, start_time, end_time, description FROM events WHERE event_id = %s;''', [slug]
-                    )
+            '''SELECT event_id, user_id, title, description, address, lat, lon, start_time, end_time, categories FROM events WHERE event_id = %s;''', [slug]
+        )
 
         events = cursor.fetchall()
         if not events:
             return HttpResponse(status=404)
+        
+        if events['categories']:
+            events['categories'] = events['categories'].split('&')
+
         response = {
-                "events" : events
-                }
+            "events" : events
+        }
         return JsonResponse(response)
+
     elif request.method == 'PUT':
         cursor = connection.cursor()
         cursor.execute(
-                         '''SELECT event_id, title, address, lat, lon, start_time, end_time, description FROM events WHERE event_id = %s;''', [slug]
-                    )
+            '''SELECT event_id FROM events WHERE event_id = %s;''', [slug]
+        )
 
         events = cursor.fetchall()
         if not events:
@@ -41,9 +47,6 @@ def events_detail(request, slug):
 
         json_data = json.loads(request.body)
 
-        event_id = slug
-
-        user_id = json_data['user_id']
         title = json_data['title']
         description = json_data['description']
         address = json_data['address']
@@ -58,24 +61,30 @@ def events_detail(request, slug):
         start_time = datetime.fromtimestamp(int(json_data['start_time']))
         end_time = datetime.fromtimestamp(int(json_data['end_time']))
 
+        categories = json_data['categories']
+        if categories:
+            categories_str = '&'.join(categories)
+
         cursor = connection.cursor()
-        cursor.execute(''' UPDATE events SET title = %s, description = %s, address = %s, lat = %s, lon = %s, start_time = %s, end_time = %s  WHERE event_id = %s;  ''', [title, description, address, lat, lon, start_time, end_time, slug])
+        cursor.execute('''UPDATE events SET title = %s, description = %s, address = %s, lat = %s, lon = %s, start_time = %s, end_time = %s, categories = %s WHERE event_id = %s;''', [title, description, address, lat, lon, start_time, end_time, categories_str, slug])
 
         return HttpResponse(status=200)
+
     elif request.method == 'DELETE':
         cursor = connection.cursor()
         cursor.execute(
-                         '''SELECT event_id, title, address, lat, lon, start_time, end_time, description FROM events WHERE event_id = %s;''', [slug]
-                    )
+            '''SELECT event_id FROM events WHERE event_id = %s;''', [slug]
+        )
 
         events = cursor.fetchall()
         if not events:
             return HttpResponse(status=404)
 
         cursor.execute(
-                '''DELETE FROM events WHERE event_id=%s; ''', [slug]    
-                )
+            '''DELETE FROM events WHERE event_id=%s;''', [slug]    
+        )
         return HttpResponse(status=200)
+
     else:
         return HttpResponse(status=404)
 
@@ -104,10 +113,15 @@ def events(request):
         start_time = datetime.fromtimestamp(int(json_data['start_time']))
         end_time = datetime.fromtimestamp(int(json_data['end_time']))
 
+        categories = json_data['categories']
+        if categories:
+            categories_str = '&'.join(categories)
+
         cursor = connection.cursor()
         cursor.execute('INSERT INTO events '
-            '(event_id, user_id, title, description, address, lat, lon, start_time, end_time) VALUES '
-            '(%s, %s, %s, %s, %s, %s, %s, %s, %s);', (event_id, user_id, title, description, address, lat, lon, start_time, end_time))
+            '(event_id, user_id, title, description, address, lat, lon, start_time, end_time, categories) '
+            'VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s);',
+            (event_id, user_id, title, description, address, lat, lon, start_time, end_time, categories_str))
 
         return HttpResponse(status=201)
 
@@ -118,7 +132,7 @@ def events(request):
         results = int(request.GET.get('results'))
 
         cursor = connection.cursor()
-        cursor.execute('SELECT x.event_id, x.title, x.address, x.lat, x.lon, x.start_time, x.start_time, x.description FROM'
+        cursor.execute('SELECT x.event_id, x.title, x.address, x.lat, x.lon, x.start_time, x.end_time, x.description FROM'
                        '('
                          'SELECT event_id, title, address, lat, lon, start_time, end_time, description, '
                            'SQRT('
@@ -132,8 +146,6 @@ def events(request):
                        'ORDER BY x.distance LIMIT %s;',
                        (start_lat, start_lon, results))
 
-        # columns = [col[0] for col in cursor.description]
-        # nearby_events = [ dict(zip(columns, row)) for row in cursor.fetchall() ]
         nearby_events = cursor.fetchall()
 
         response = {}
