@@ -77,7 +77,7 @@ def events_detail(request, slug):
         cursor = connection.cursor()
         cursor.execute('''UPDATE events SET title = %s, description = %s, address = %s, lat = %s, lon = %s, start_time = %s, end_time = %s, categories = %s WHERE event_id = %s;''', [title, description, address, lat, lon, start_time, end_time, categories_str, slug])
 
-        return HttpResponse(status=200)
+        return HttpResponse(status=201)
 
     elif request.method == 'DELETE':
         cursor = connection.cursor()
@@ -92,7 +92,7 @@ def events_detail(request, slug):
         cursor.execute(
             '''DELETE FROM events WHERE event_id=%s;''', [slug]    
         )
-        return HttpResponse(status=200)
+        return HttpResponse(status=201)
 
     else:
         return HttpResponse(status=404)
