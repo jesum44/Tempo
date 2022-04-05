@@ -91,7 +91,7 @@ struct SwiftUIDeleteEventView: View {
 
 func deleteEvent(eventID: String, delegate: SheetDismisserProtocol) {
     // delete event from database with DELETE http request
-    let url = "https://54.175.206.175/events/" + eventID
+    let url = "https://54.175.206.175/events/" + eventID + "/"
     AF.request(url, method: .delete).response { res in
         debugPrint(res)
     }

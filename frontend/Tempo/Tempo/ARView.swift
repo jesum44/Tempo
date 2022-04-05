@@ -227,7 +227,7 @@ class ARView: UIViewController, CLLocationManagerDelegate {
     // runs when a event popup is tapped
     func handleEventPopupTapped(eventID: String) {
         // get event's full info
-        let getURL = "https://54.175.206.175/events/" + eventID
+        let getURL = "https://54.175.206.175/events/" + eventID + "/"
         AF.request(getURL, method: .get).response { res in
             //let resData = String(data: res.data!, encoding: String.Encoding.utf8)!
             if let json = try? JSON(data: res.data!) {
