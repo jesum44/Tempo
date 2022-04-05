@@ -20,7 +20,7 @@ def events_detail(request, slug):
     if request.method == 'GET':
         cursor = connection.cursor()
         cursor.execute(
-            '''SELECT event_id, user_id, title, description, address, lat, lon, start_time, end_time, categories FROM events WHERE event_id = %s;''', [slug]
+            '''SELECT event_id, title, address, lat, lon, start_time, end_time, description, categories FROM events WHERE event_id = %s;''', [slug]
         )
 
         events = cursor.fetchall()
@@ -29,10 +29,10 @@ def events_detail(request, slug):
 
         event_data = list(events[0])
 
-        if event_data[9]:
-            event_data[9] = event_data[9].split('&')
+        if event_data[8]:
+            event_data[8] = event_data[8].split('&')
         else:
-            event_data[9] = []
+            event_data[8] = []
 
         return JsonResponse({'event': event_data})
 
