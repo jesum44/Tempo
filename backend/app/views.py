@@ -11,6 +11,10 @@ import json
 import uuid
 import geocoder
 
+from nltk.tokenize import word_tokenize
+from nltk.corpus import stopwords
+from nltk.stem import SnowballStemmer
+
 from datetime import datetime
 # Create your views here.
 
@@ -148,6 +152,75 @@ def events(request):
                        (start_lat, start_lon, results))
 
         nearby_events = cursor.fetchall()
+
+        response = {}
+        response['events'] = nearby_events
+        return JsonResponse(response)
+
+    else:
+        return HttpResponse(status=404)
+
+
+def score_lists(query_words: list, last_query: str, event_str: str):
+    stemmer = SnowballStemmer('english')
+    event_words = [stemmer.stem(word) for word in word_tokenize(event_str) if not word in stopwords.words()]
+    event_len = len(query_words) + len(event_words)
+
+    for event_word in event_words:
+        for query_word in query_words:
+            if event_word == query_word:
+                score += 1.0 / event_len
+        
+        if event_word.startswith(last_query):
+            score += 1.0 / (event_len)
+
+# TODO: remove csrf exempt decorator if we can figure out how
+@csrf_exempt
+def search(request):
+    if request.method == 'GET':
+        # Get nearby events
+        start_lat = float(request.GET.get('lat'))
+        start_lon = float(request.GET.get('lon'))
+        query = request.GET.get('q')
+
+        cursor = connection.cursor()
+        cursor.execute('SELECT x.event_id, x.distance, x.title, x.description, x.user_id FROM'
+                       '('
+                            'SELECT event_id, user_id, title, lat, lon, start_time, end_time, description, user_id '
+                            'SQRT('
+                                'POW(69.1 * (lat - %s), 2) + POW(69.1 * (%s - lon) * COS(lat / 57.3), 2)'
+                            ') AS distance '
+                            'FROM events '
+                       ') AS x '
+                       'WHERE x.distance < 500 AND x.end_time >= now();',
+                       (start_lat, start_lon))
+
+        query_words = word_tokenize(query)
+        last_query = query_words.pop()
+
+        stemmer = SnowballStemmer('english')
+        query_words = [stemmer.stem(word) for word in query_words if not word in stopwords.words()]
+
+        nearby_events = cursor.fetchall()
+        scores = []
+
+        for event in nearby_events:
+            distance = event[1]
+            title = event[2]
+            description = event[3]
+            user_id = event[4]
+
+            score = 0.0
+
+            score += score_lists(query_words, last_query, title)
+            score += 0.75 * score_lists(query_words, last_query, description)
+
+            score += 1 / (2 + 2*distance)
+
+            if user_id in query:
+                score += 1
+
+            scores.append(score)
 
         response = {}
         response['events'] = nearby_events
