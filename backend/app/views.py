@@ -11,6 +11,10 @@ import json
 import uuid
 import geocoder
 
+import nltk
+nltk.download('punkt')
+nltk.download('stopwords')
+
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
 from nltk.stem import SnowballStemmer
@@ -166,6 +170,8 @@ def score_lists(query_words: list, last_query: str, event_str: str):
     event_words = [stemmer.stem(word) for word in word_tokenize(event_str) if not word in stopwords.words()]
     event_len = len(query_words) + len(event_words)
 
+    score = 0.0
+
     for event_word in event_words:
         for query_word in query_words:
             if event_word == query_word:
@@ -174,11 +180,14 @@ def score_lists(query_words: list, last_query: str, event_str: str):
         if event_word.startswith(last_query):
             score += 1.0 / (event_len)
 
+    return score
+
+
 # TODO: remove csrf exempt decorator if we can figure out how
 @csrf_exempt
 def search(request):
     if request.method == 'GET':
-        # Get nearby events
+        # Get events based on location and search query
         start_lat = float(request.GET.get('lat'))
         start_lon = float(request.GET.get('lon'))
         query = request.GET.get('q')
@@ -186,7 +195,7 @@ def search(request):
         cursor = connection.cursor()
         cursor.execute('SELECT x.event_id, x.distance, x.title, x.description, x.user_id FROM'
                        '('
-                            'SELECT event_id, user_id, title, lat, lon, start_time, end_time, description, user_id '
+                            'SELECT event_id, user_id, title, lat, lon, start_time, end_time, description, '
                             'SQRT('
                                 'POW(69.1 * (lat - %s), 2) + POW(69.1 * (%s - lon) * COS(lat / 57.3), 2)'
                             ') AS distance '
