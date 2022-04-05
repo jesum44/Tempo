@@ -231,41 +231,39 @@ class ARView: UIViewController, CLLocationManagerDelegate {
         AF.request(getURL, method: .get).response { res in
             //let resData = String(data: res.data!, encoding: String.Encoding.utf8)!
             if let json = try? JSON(data: res.data!) {
-                for eventEntry in json["events"].arrayValue {
-                    
-                    // set global event to the one just tapped
-                    GLOBAL_CURRENT_EVENT = Event(
-                        event_id: eventEntry[0].stringValue,
-                        title: eventEntry[1].stringValue,
-                        address: eventEntry[2].stringValue,
-                        latitude: "\(eventEntry[3].stringValue)",
-                        longitude: "\(eventEntry[4].stringValue)",
-                        start_time: eventEntry[5].stringValue,
-                        end_time:  eventEntry[6].stringValue,
-                        description: eventEntry[7].stringValue
-                    )
-                    
-                    // now, launch the event info modal, filled with info about the global event
-                    let storyboard = UIStoryboard(name: "EventInfoView", bundle: nil)
-                    let vc = storyboard.instantiateViewController(withIdentifier: "EventInfoViewStoryboardID") as! EventInfoView
-                    
-                    let navController = UINavigationController(rootViewController: vc)
-                    
-                    // make modal half screen, comment this if statement out for full screen
-                    // https://stackoverflow.com/a/67988976
-                    if let pc =
-                        navController.presentationController
-                            as? UISheetPresentationController {
+                let eventEntry = json["event"].arrayValue
 
-                        pc.detents = [.medium()]
-                    }
-                    
-                    self.present(navController, animated: true, completion: nil)
+                // set global event to the one just tapped
+                GLOBAL_CURRENT_EVENT = Event(
+                    event_id: eventEntry[0].stringValue,
+                    title: eventEntry[1].stringValue,
+                    address: eventEntry[2].stringValue,
+                    latitude: "\(eventEntry[3].stringValue)",
+                    longitude: "\(eventEntry[4].stringValue)",
+                    start_time: eventEntry[5].stringValue,
+                    end_time:  eventEntry[6].stringValue,
+                    description: eventEntry[7].stringValue
+                )
+
+                // now, launch the event info modal, filled with info about the global event
+                let storyboard = UIStoryboard(name: "EventInfoView", bundle: nil)
+                let vc = storyboard.instantiateViewController(withIdentifier: "EventInfoViewStoryboardID") as! EventInfoView
+
+                let navController = UINavigationController(rootViewController: vc)
+
+                // make modal half screen, comment this if statement out for full screen
+                // https://stackoverflow.com/a/67988976
+                if let pc =
+                    navController.presentationController
+                        as? UISheetPresentationController {
+
+                    pc.detents = [.medium()]
                 }
+
+                self.present(navController, animated: true, completion: nil)
             }
         }
     }
-    
 
 }
 
