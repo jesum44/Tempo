@@ -166,9 +166,9 @@ def events(request):
 
 
 def score_lists(query_words: list, last_query: str, event_str: str):
-    stemmer = SnowballStemmer('english')
-    event_words = [stemmer.stem(word) for word in word_tokenize(event_str) if not word in stopwords.words()]
-    event_len = len(query_words) + len(event_words)
+    # stemmer = SnowballStemmer('english')
+    event_words = [word for word in word_tokenize(event_str.lower()) if not word in stopwords.words()]
+    event_len = len(event_words)
 
     score = 0.0
 
@@ -178,7 +178,7 @@ def score_lists(query_words: list, last_query: str, event_str: str):
                 score += 1.0 / event_len
         
         if event_word.startswith(last_query):
-            score += 1.0 / (event_len)
+            score += 1.0 / event_len
 
     return score
 
@@ -190,7 +190,7 @@ def search(request):
         # Get events based on location and search query
         start_lat = float(request.GET.get('lat'))
         start_lon = float(request.GET.get('lon'))
-        query = request.GET.get('q')
+        query = request.GET.get('q').lower()
 
         cursor = connection.cursor()
         cursor.execute('SELECT x.event_id, x.distance, x.title, x.description, x.user_id FROM'
@@ -207,8 +207,8 @@ def search(request):
         query_words = word_tokenize(query)
         last_query = query_words.pop()
 
-        stemmer = SnowballStemmer('english')
-        query_words = [stemmer.stem(word) for word in query_words if not word in stopwords.words()]
+        # stemmer = SnowballStemmer('english')
+        query_words = [word for word in query_words if not word in stopwords.words()]
 
         nearby_events = cursor.fetchall()
         scores = []
@@ -226,15 +226,15 @@ def search(request):
             score += score_lists(query_words, last_query, title)
             score += 0.75 * score_lists(query_words, last_query, description)
 
-            score += 1 / (2 + 2*distance)
+            score += 1 / (4 + distance)
 
             if user_id in query:
                 score += 1
 
             scores.append(score)
             short_events.append({'event_id': event_id, 'title': title})
-        
-        sorted_events = [event for _, event in sorted(zip(scores, short_events), reverse=True)]
+
+        sorted_events = [event for _, event in sorted(zip(scores, short_events), key=lambda pair: pair[0], reverse=True)]
         return JsonResponse({'event_names': sorted_events[:10]})
 
     else:
