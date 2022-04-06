@@ -212,8 +212,10 @@ def search(request):
 
         nearby_events = cursor.fetchall()
         scores = []
+        short_events = []
 
         for event in nearby_events:
+            event_id = event[0]
             distance = event[1]
             title = event[2]
             description = event[3]
@@ -230,10 +232,10 @@ def search(request):
                 score += 1
 
             scores.append(score)
-
-        response = {}
-        response['events'] = nearby_events
-        return JsonResponse(response)
+            short_events.append({'event_id': event_id, 'title': title})
+        
+        sorted_events = [event for _, event in sorted(zip(scores, short_events), reverse=True)]
+        return JsonResponse({'event_names': sorted_events[:10]})
 
     else:
         return HttpResponse(status=404)
