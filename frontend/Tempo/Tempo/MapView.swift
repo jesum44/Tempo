@@ -11,10 +11,16 @@ import SwiftUI
 import GoogleMaps
 import Alamofire
 import SwiftyJSON
+import iOSDropDown
 
 final class MapView:UIViewController, CLLocationManagerDelegate, GMSMapViewDelegate {
+    
+
+    
     private var mapView: GMSMapView!
     private let locManager = CLLocationManager()
+    lazy var searchBar:UISearchBar = UISearchBar()
+    let dropDown = DropDown()
     
     var event: Event? = nil
     
@@ -66,6 +72,46 @@ final class MapView:UIViewController, CLLocationManagerDelegate, GMSMapViewDeleg
         mapButton.isEnabled = false
         ARButton.isEnabled = true
         ARButton.addTarget(self, action:#selector(toggleAR), for: .touchUpInside)
+        
+        /* START ADD SEARCHBAR + FUNCTIONALITIES */
+        navigationItem.titleView = dropDown
+        dropDown.sizeToFit()
+        let imageView = UIImageView()
+        let glass = UIImage(systemName: "magnifyingglass")
+        imageView.image = glass
+        imageView.tintColor = .gray
+        imageView.frame = CGRect(x: 10, y: 5, width: 45, height: 20)
+        imageView.contentMode = .scaleAspectFit
+        
+        dropDown.isSearchEnable = true
+        dropDown.leftViewMode = .always
+        dropDown.leftView = imageView
+        dropDown.borderWidth = 0.1
+        dropDown.borderStyle = UITextField.BorderStyle.roundedRect
+        dropDown.textColor = .black
+        dropDown.arrowColor = .clear
+        dropDown.selectedRowColor = .black
+        dropDown.checkMarkEnabled = false
+        dropDown.rowBackgroundColor = .black
+        dropDown.placeholder = "Search Events"
+        dropDown.frame.size.width = 300
+        dropDown.frame.size.height = 4
+        dropDown.backgroundColor = .white
+        var events = [String]()
+        for event in EventStore.shared.events{
+            //print(event.title!)
+            events.append(event.title!)
+        }
+        events.sort()
+        dropDown.optionArray = events
+        dropDown.didSelect{(selectedText, index, id) in
+            for event in EventStore.shared.events{
+                if (event.title! == selectedText){
+                    self.handleEventMarkerTapped(event: event)
+                }
+            }
+        }
+        /* END ADD SEARCHBAR + FUNCTIONALITIES */
         
         // add + button to view
         self.view.addSubview(button)
@@ -136,6 +182,16 @@ final class MapView:UIViewController, CLLocationManagerDelegate, GMSMapViewDeleg
             end_time:  event.end_time,
             description: event.description
         )
+        
+        //center camera on event clicked
+        let lat = Double(event.latitude!)
+        let long = Double(event.longitude!)
+        let position = GMSCameraPosition.camera(
+            withLatitude: lat!,
+            longitude: long!,
+            zoom: 17
+        )
+        mapView.camera = position
         
         // now, launch the event info modal, filled with info about the global event
         let storyboard = UIStoryboard(name: "EventInfoView", bundle: nil)

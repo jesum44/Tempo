@@ -17,6 +17,7 @@
 		7657E88D27E2DA95001A785F /* CreateEventsButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7657E88C27E2DA95001A785F /* CreateEventsButton.swift */; };
 		7657E88F27E3C4D3001A785F /* createToggle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7657E88E27E3C4D3001A785F /* createToggle.swift */; };
 		7657E89327E3C827001A785F /* MapView2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7657E89227E3C827001A785F /* MapView2.swift */; };
+		76DC500B27FE8496006AD7F4 /* SearchBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76DC500A27FE8496006AD7F4 /* SearchBar.swift */; };
 		8A4C804727F270CE00E614BF /* DeleteEventView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A4C804627F270CE00E614BF /* DeleteEventView.swift */; };
 		8A73F14127F5392D00915F9F /* EditEventView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A73F14027F5392D00915F9F /* EditEventView.swift */; };
 		8A73F14327F54A3400915F9F /* extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A73F14227F54A3400915F9F /* extensions.swift */; };
@@ -41,6 +42,7 @@
 		7657E88C27E2DA95001A785F /* CreateEventsButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateEventsButton.swift; sourceTree = "<group>"; };
 		7657E88E27E3C4D3001A785F /* createToggle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = createToggle.swift; sourceTree = "<group>"; };
 		7657E89227E3C827001A785F /* MapView2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapView2.swift; sourceTree = "<group>"; };
+		76DC500A27FE8496006AD7F4 /* SearchBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchBar.swift; sourceTree = "<group>"; };
 		8A4C804627F270CE00E614BF /* DeleteEventView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteEventView.swift; sourceTree = "<group>"; };
 		8A73F14027F5392D00915F9F /* EditEventView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditEventView.swift; sourceTree = "<group>"; };
 		8A73F14227F54A3400915F9F /* extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = extensions.swift; sourceTree = "<group>"; };
@@ -116,12 +118,13 @@
 				EB6ECB1F27E019580040C0E2 /* LaunchScreen.storyboard */,
 				EB6ECB2227E019580040C0E2 /* Info.plist */,
 				EB6ECB2827E01CBD0040C0E2 /* ARView.swift */,
-				7657E88C27E2DA95001A785F /* CreateEventsButton.swift */,
 				4428AF3A27E22ECA00248B2E /* Event.swift */,
 				4428AF3C27E22EDB00248B2E /* EventStore.swift */,
 				7657E88827E2D73D001A785F /* MapView.swift */,
 				7657E89227E3C827001A785F /* MapView2.swift */,
+				7657E88C27E2DA95001A785F /* CreateEventsButton.swift */,
 				7657E88E27E3C4D3001A785F /* createToggle.swift */,
+				76DC500A27FE8496006AD7F4 /* SearchBar.swift */,
 				8A73F14227F54A3400915F9F /* extensions.swift */,
 			);
 			path = Tempo;
@@ -263,6 +266,7 @@
 			files = (
 				7657E88D27E2DA95001A785F /* CreateEventsButton.swift in Sources */,
 				7657E88927E2D73D001A785F /* MapView.swift in Sources */,
+				76DC500B27FE8496006AD7F4 /* SearchBar.swift in Sources */,
 				7657E88F27E3C4D3001A785F /* createToggle.swift in Sources */,
 				8A73F14327F54A3400915F9F /* extensions.swift in Sources */,
 				EB6ECB1927E019550040C0E2 /* ViewController.swift in Sources */,
@@ -416,7 +420,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 8KYAG4G658;
+				DEVELOPMENT_TEAM = R6WGMNBNXH;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Tempo/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "";
@@ -431,7 +435,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = edu.umich.skorman.Tempo;
+				PRODUCT_BUNDLE_IDENTIFIER = edu.umich.hmsalame.Tempo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -447,7 +451,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 8KYAG4G658;
+				DEVELOPMENT_TEAM = R6WGMNBNXH;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Tempo/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "";
@@ -462,7 +466,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = edu.umich.skorman.Tempo;
+				PRODUCT_BUNDLE_IDENTIFIER = edu.umich.hmsalame.Tempo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;

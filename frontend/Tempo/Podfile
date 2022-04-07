@@ -19,4 +19,7 @@ target 'Tempo' do
   # Google Maps
   pod 'GoogleMaps'
 
+  #search functionalities
+  pod 'iOSDropDown'
+
 end
