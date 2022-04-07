@@ -20,7 +20,9 @@ from app import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('events/', views.events, name='events'),
-    # path('accounts/register/', views.register, name='register'),
-    # path('accounts/logout/', views.logout, name='logout'),
-    # path('accounts/login/', views.login, name='login'),
+    path('events/<slug:slug>/', views.events_detail, name='events_detail'),
+    path('search/', views.search, name='search')
+    #path('accounts/register/', views.register, name='register'),
+    #path('accounts/logout/', views.logout, name='logout'),
+    #path('accounts/login/', views.login, name='login'),
 ]
