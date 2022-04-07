@@ -11,25 +11,12 @@ import SwiftUI
 import GoogleMaps
 import Alamofire
 import SwiftyJSON
+import MapKit
 import iOSDropDown
+import Combine
 
-<<<<<<< Updated upstream
-final class MapView:UIViewController, CLLocationManagerDelegate, GMSMapViewDelegate {
-=======
-//class MyAnnotation: NSObject, MKAnnotation {
-//    var event_id: String?
-//    var coordinate: CLLocationCoordinate2D
-//    let title: String?
-//
-//    init(event_id: String, coordinate: CLLocationCoordinate2D, title: String) {
-//        self.event_id = event_id
-//        self.coordinate = coordinate
-//        self.title = title
-//    }
-//}
-//
 
-class MapView:UIViewController, ObservableObject, CLLocationManagerDelegate, MKMapViewDelegate {
+final class MapView:UIViewController, ObservableObject, CLLocationManagerDelegate, MKMapViewDelegate {
     @Published var mapView = MKMapView()
     private let locManager = CLLocationManager()
     
@@ -42,40 +29,29 @@ class MapView:UIViewController, ObservableObject, CLLocationManagerDelegate, MKM
 //    @EnvironmentObject var mapData: MapViewModel
     
     @StateObject var mapData = MapViewModel()
-    var coordinator = Coordinator()
     
     var timer: Timer? = nil
 //    let timer = Timer.publish(every: 1, tolerance: 0.5, on: .main, in: .common, options: handleTimer).autoconnect()
     
->>>>>>> Stashed changes
-    
 
     
-    private var mapView: GMSMapView!
-    private let locManager = CLLocationManager()
-    lazy var searchBar:UISearchBar = UISearchBar()
-    let dropDown = DropDown()
     
     var event: Event? = nil
     
     override func loadView(){
-<<<<<<< Updated upstream
-        print("in load view")
-//        let mapView = MapView2()
-        mapView = GMSMapView()
-=======
         mapView = MKMapView()
->>>>>>> Stashed changes
         view = mapView
     }
+    
+    var cancellable: Cancellable?
+    private var cancellables = Set<AnyCancellable>()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         // Map Stuff
         mapView.delegate = self
-        mapView.isMyLocationEnabled = true
-        mapView.settings.myLocationButton = true
+        mapView.showsUserLocation = true
         
         locManager.desiredAccuracy = kCLLocationAccuracyBest
         
@@ -83,18 +59,8 @@ class MapView:UIViewController, ObservableObject, CLLocationManagerDelegate, MKM
         locManager.delegate = self
         locManager.startUpdatingLocation()
         
-<<<<<<< Updated upstream
-        var marker: GMSMarker!
-        
-        EventStore.shared.events.forEach {
-            let lat = Double( $0.latitude! )!
-            let lon = Double ($0.longitude! )!
-            marker = GMSMarker(position: CLLocationCoordinate2D(latitude: lat, longitude: lon))
-            marker.map = mapView
-            marker.userData = $0
-//            marker.title = $0.title
-=======
         addSubscribers()
+        
         
         //set default zoom of map view
         let center = CLLocationCoordinate2D(
@@ -219,119 +185,32 @@ class MapView:UIViewController, ObservableObject, CLLocationManagerDelegate, MKM
                 mapView.addAnnotation(pointAnnotation)
             }
         }
-        
     }
     
     func addSubscribers() {
-        $searchText
-            .combineLatest(self.$events) // anytime searchText or events change this will get published
-            .debounce(for: .seconds(0.3), scheduler: DispatchQueue.main)
-            .map { (text, nearbyEvents) -> [Event] in
-                
-                guard !text.isEmpty else {
-                    return nearbyEvents
+            $searchText
+                .combineLatest(self.$events) // anytime searchText or events change this will get published
+                .debounce(for: .seconds(0.3), scheduler: DispatchQueue.main)
+                .map { (text, nearbyEvents) -> [Event] in
+                    
+                    guard !text.isEmpty else {
+                        return nearbyEvents
+                    }
+                    
+                    // because Swift is case-sensitive
+                    let lowercasedText = text.lowercased()
+                    return nearbyEvents.filter { (event) -> Bool in
+                         return event.title!.lowercased().contains(lowercasedText) || event.description!.lowercased().contains(lowercasedText)
+                    }
+                    
                 }
-                
-                // because Swift is case-sensitive
-                let lowercasedText = text.lowercased()
-                return nearbyEvents.filter { (event) -> Bool in
-                     return event.title!.lowercased().contains(lowercasedText) || event.description!.lowercased().contains(lowercasedText)
+                .sink { [weak self] (returnedEvents) in
+                    self?.events = returnedEvents
+                    self?.updateMap()
                 }
-                
-            }
-            .sink { [weak self] (returnedEvents) in
-                self?.events = returnedEvents
-                self?.updateMap()
-            }
-            .store(in: &cancellables)
-            
-    }
+                .store(in: &cancellables)
+        }
     
-    
-    func updateMapType() {
-        if mapType == .standard {
-            mapType = .hybrid
-            mapView.mapType = mapType
->>>>>>> Stashed changes
-        }
-
-        // add "+" button to create an event
-        let buttonFactory = CreateEventsButton()
-        let frame = self.view.safeAreaLayoutGuide
-        print(frame)
-        
-        let button = buttonFactory.createButton(frame:frame)
-        print(button)
-        button.addTarget(self, action: #selector(createEventButtonTapped), for: .touchUpInside)
-        
-        let toggleFactory = createToggle()
-        let toggleContainer = toggleFactory.createButtonContainer(screenHeight: screenHeight)
-        let mapButton = toggleFactory.createMapButton(screenHeight: screenHeight)
-        let ARButton = toggleFactory.createARButton(screenHeight: screenHeight)
-        mapButton.isEnabled = false
-        ARButton.isEnabled = true
-        ARButton.addTarget(self, action:#selector(toggleAR), for: .touchUpInside)
-        
-        /* START ADD SEARCHBAR + FUNCTIONALITIES */
-        navigationItem.titleView = dropDown
-        dropDown.sizeToFit()
-        let imageView = UIImageView()
-        let glass = UIImage(systemName: "magnifyingglass")
-        imageView.image = glass
-        imageView.tintColor = .gray
-        imageView.frame = CGRect(x: 10, y: 5, width: 45, height: 20)
-        imageView.contentMode = .scaleAspectFit
-        
-        dropDown.isSearchEnable = true
-        dropDown.leftViewMode = .always
-        dropDown.leftView = imageView
-        dropDown.borderWidth = 0.1
-        dropDown.borderStyle = UITextField.BorderStyle.roundedRect
-        dropDown.textColor = .black
-        dropDown.arrowColor = .clear
-        dropDown.selectedRowColor = .black
-        dropDown.checkMarkEnabled = false
-        dropDown.rowBackgroundColor = .black
-        dropDown.placeholder = "Search Events"
-        dropDown.frame.size.width = 300
-        dropDown.frame.size.height = 4
-        dropDown.backgroundColor = .white
-        var events = [String]()
-        for event in EventStore.shared.events{
-            //print(event.title!)
-            events.append(event.title!)
-        }
-        events.sort()
-        dropDown.optionArray = events
-        dropDown.didSelect{(selectedText, index, id) in
-            for event in EventStore.shared.events{
-                if (event.title! == selectedText){
-                    self.handleEventMarkerTapped(event: event)
-                }
-            }
-        }
-        /* END ADD SEARCHBAR + FUNCTIONALITIES */
-        
-        // add + button to view
-        self.view.addSubview(button)
-        self.view.addSubview(toggleContainer)
-        
-        toggleContainer.addArrangedSubview(mapButton)
-        toggleContainer.addArrangedSubview(ARButton)
-    }
-    
-<<<<<<< Updated upstream
-    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        guard let location = mapView.myLocation else {
-            return
-        }
-        
-        mapView.camera = GMSCameraPosition.camera(withTarget: location.coordinate, zoom: 16.0)
-        
-        manager.stopUpdatingLocation()
-    }
-=======
->>>>>>> Stashed changes
     
     @objc func toggleAR(sender: UIButton!){
         sender.isEnabled = false
@@ -359,16 +238,6 @@ class MapView:UIViewController, ObservableObject, CLLocationManagerDelegate, MKM
     }
     
     
-    //TODO: FIND A WAY TO ADAPT THIS TO APPLE MAPS -> GET A MARKER's INFO as an event
-//     option: look up event by its coordinates if its impossible to store as an event
-//    func mapView(_ mapView: MKMapView, didTap marker: MapMarker) -> Bool {
-//        guard let event = marker.userData as? Event else {
-//            return false
-//        }
-//
-//        handleEventMarkerTapped(event: event)
-//        return false
-//    }
     
     func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
         print("here")
@@ -432,16 +301,6 @@ class MapView:UIViewController, ObservableObject, CLLocationManagerDelegate, MKM
         let coord = CLLocationCoordinate2D(latitude:Double(event.latitude!)!, longitude: Double(event.longitude!)!)
         mapView.setCenter(coord, animated: true)
         
-        //center camera on event clicked
-        let lat = Double(event.latitude!)
-        let long = Double(event.longitude!)
-        let position = GMSCameraPosition.camera(
-            withLatitude: lat!,
-            longitude: long!,
-            zoom: 17
-        )
-        mapView.camera = position
-        
         // now, launch the event info modal, filled with info about the global event
         let storyboard = UIStoryboard(name: "EventInfoView", bundle: nil)
         let vc = storyboard.instantiateViewController(withIdentifier: "EventInfoViewStoryboardID") as! EventInfoView
@@ -460,8 +319,5 @@ class MapView:UIViewController, ObservableObject, CLLocationManagerDelegate, MKM
         self.present(navController, animated: true, completion: nil)
         
     }
-<<<<<<< Updated upstream
-    
-=======
->>>>>>> Stashed changes
+
 }

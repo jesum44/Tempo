@@ -18,6 +18,7 @@
 		7657E88F27E3C4D3001A785F /* createToggle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7657E88E27E3C4D3001A785F /* createToggle.swift */; };
 		7657E89327E3C827001A785F /* MapView2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7657E89227E3C827001A785F /* MapView2.swift */; };
 		76DC500B27FE8496006AD7F4 /* SearchBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76DC500A27FE8496006AD7F4 /* SearchBar.swift */; };
+		76DC500D27FFA6F6006AD7F4 /* MapViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76DC500C27FFA6F6006AD7F4 /* MapViewModel.swift */; };
 		8A4C804727F270CE00E614BF /* DeleteEventView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A4C804627F270CE00E614BF /* DeleteEventView.swift */; };
 		8A73F14127F5392D00915F9F /* EditEventView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A73F14027F5392D00915F9F /* EditEventView.swift */; };
 		8A73F14327F54A3400915F9F /* extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A73F14227F54A3400915F9F /* extensions.swift */; };
@@ -43,6 +44,7 @@
 		7657E88E27E3C4D3001A785F /* createToggle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = createToggle.swift; sourceTree = "<group>"; };
 		7657E89227E3C827001A785F /* MapView2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapView2.swift; sourceTree = "<group>"; };
 		76DC500A27FE8496006AD7F4 /* SearchBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchBar.swift; sourceTree = "<group>"; };
+		76DC500C27FFA6F6006AD7F4 /* MapViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapViewModel.swift; sourceTree = "<group>"; };
 		8A4C804627F270CE00E614BF /* DeleteEventView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteEventView.swift; sourceTree = "<group>"; };
 		8A73F14027F5392D00915F9F /* EditEventView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditEventView.swift; sourceTree = "<group>"; };
 		8A73F14227F54A3400915F9F /* extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = extensions.swift; sourceTree = "<group>"; };
@@ -121,6 +123,7 @@
 				4428AF3A27E22ECA00248B2E /* Event.swift */,
 				4428AF3C27E22EDB00248B2E /* EventStore.swift */,
 				7657E88827E2D73D001A785F /* MapView.swift */,
+				76DC500C27FFA6F6006AD7F4 /* MapViewModel.swift */,
 				7657E89227E3C827001A785F /* MapView2.swift */,
 				7657E88C27E2DA95001A785F /* CreateEventsButton.swift */,
 				7657E88E27E3C4D3001A785F /* createToggle.swift */,
@@ -271,6 +274,7 @@
 				8A73F14327F54A3400915F9F /* extensions.swift in Sources */,
 				EB6ECB1927E019550040C0E2 /* ViewController.swift in Sources */,
 				8A4C804727F270CE00E614BF /* DeleteEventView.swift in Sources */,
+				76DC500D27FFA6F6006AD7F4 /* MapViewModel.swift in Sources */,
 				4428AF3727E1B92D00248B2E /* CreateEventView.swift in Sources */,
 				8A73F14127F5392D00915F9F /* EditEventView.swift in Sources */,
 				4428AF3D27E22EDB00248B2E /* EventStore.swift in Sources */,
