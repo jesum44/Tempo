@@ -129,15 +129,15 @@ struct MapHomeView: View {
         }
     }
     
-    var results: [Event] {
-        if mapData.searchText.isEmpty {
-            return mapData.events
-        }
-        else {
-            return mapData.events.filter {
-                $0.title!.contains(mapData.searchText)}
-        }
-    }
+//    var results: [Event] {
+//        if mapData.searchText.isEmpty {
+//            return mapData.events
+//        }
+//        else {
+//            return mapData.events.filter {
+//                $0.title!.contains(mapData.searchText)}
+//        }
+//    }
 }
                   
 

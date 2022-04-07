@@ -183,6 +183,53 @@ class MapViewModel: UIViewController, ObservableObject, CLLocationManagerDelegat
         self.lon = location.coordinate.longitude
     }
     
+    func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
+                print("here")
+                guard let annotation = view.annotation as? MyAnnotation else { return }
+    
+    
+                let getURL = "https://54.175.206.175/events/" + annotation.event_id!
+    
+                AF.request(getURL, method: .get).response { res in
+                    if let json = try? JSON(data: res.data!) {
+                        let event = json["event"].arrayValue
+                        GLOBAL_CURRENT_EVENT = Event(
+                            event_id: event[0].stringValue,
+                            title: event[1].stringValue,
+                            address: event[2].stringValue,
+                            latitude: "\(event[3].stringValue)",
+                            longitude: "\(event[4].stringValue)",
+                            start_time: event[5].stringValue,
+                            end_time:  event[6].stringValue,
+                            description: event[7].stringValue
+                        )
+    
+    
+    
+    
+    
+    
+                        let uiStoryboard = UIStoryboard(name: "EventInfoView", bundle: nil)
+    
+                        guard let vc = uiStoryboard.instantiateViewController(withIdentifier: "EventInfoViewStoryboardID") as? EventInfoView else {return}
+    
+                        let nc = UINavigationController(rootViewController: vc)
+    
+                        if let pc = nc.presentationController as? UISheetPresentationController {
+                            pc.detents = [.medium()]
+                        }
+    
+    
+//                        self.dismiss(animated: true, completion: nil)
+    
+                        self.present(nc, animated: true, completion: nil)
+    
+//                        navigationContoller.viewControllers.last?.present(vc, animated: true)
+                    }
+                }
+            
+        }
+    
   
     
     

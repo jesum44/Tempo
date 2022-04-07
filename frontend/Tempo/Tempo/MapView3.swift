@@ -36,7 +36,16 @@ struct MapView3: UIViewRepresentable {
     func updateUIView(_ uiView: MKMapView, context: Context) {
         
     }
-    class Coordinator: UIViewController, MKMapViewDelegate {
+    class Coordinator: NSObject, MKMapViewDelegate {
+        func topMostController() -> UIViewController {
+            var topController: UIViewController = UIApplication.shared.keyWindow!.rootViewController!
+            while(topController.presentedViewController != nil) {
+                topController = topController.presentedViewController!
+            }
+            return topController
+            
+        }
+        
         func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
             print("here")
             guard let annotation = view.annotation as? MyAnnotation else { return }
@@ -46,9 +55,7 @@ struct MapView3: UIViewRepresentable {
     
             AF.request(getURL, method: .get).response { res in
                 if let json = try? JSON(data: res.data!) {
-                    print(json)
                     let event = json["event"].arrayValue
-                    print(event)
                     GLOBAL_CURRENT_EVENT = Event(
                         event_id: event[0].stringValue,
                         title: event[1].stringValue,
@@ -60,21 +67,28 @@ struct MapView3: UIViewRepresentable {
                         description: event[7].stringValue
                     )
                 
-    
-                let uiStoryboard = UIStoryboard(name: "EventInfoView", bundle: nil)
-
-                guard let vc = uiStoryboard.instantiateViewController(withIdentifier: "EventInfoViewStoryboardID") as? EventInfoView else {return}
-
-                let nc = UINavigationController(rootViewController: vc)
-
-                if let pc = nc.presentationController as? UISheetPresentationController {
-                    pc.detents = [.medium()]
-                }
-                    
                 
 
-                self.present(nc, animated: true, completion: nil)
+                    let topVC = self.topMostController()
                     
+                    let uiStoryboard = UIStoryboard(name: "EventInfoView", bundle: nil)
+                    
+                    let vcToPresent = uiStoryboard.instantiateViewController(withIdentifier: "EventInfoViewStoryboardID") as! EventInfoView
+
+                    topVC.present(vcToPresent, animated:true, completion: nil)
+                    
+//                    let nc = UINavigationController(rootViewController: vc)
+//
+//                    if let pc = nc.presentationController as? UISheetPresentationController {
+//                        pc.detents = [.medium()]
+//                    }
+                        
+                    
+//                    self.dismiss(animated: true, completion: nil)
+//                    
+//                    self.present(nc, animated: true, completion: nil)
+//                    
+//                    navigationContoller.viewControllers.last?.present(vc, animated: true)
                 }
             }
         }

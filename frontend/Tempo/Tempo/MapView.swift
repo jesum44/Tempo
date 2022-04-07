@@ -46,12 +46,12 @@ class MapView:UIViewController, ObservableObject, CLLocationManagerDelegate, MKM
     
     var event: Event? = nil
     
-    override func loadView(){
-        print("in load view")
-//        let mapView = MapView2()
-        mapView = MKMapView()
-        view = mapView
-    }
+//    override func loadView(){
+//        print("in load view")
+////        let mapView = MapView2()
+//        mapView = MKMapView()
+//        view = mapView
+//    }
     
     var cancellable: Cancellable?
     
@@ -59,25 +59,26 @@ class MapView:UIViewController, ObservableObject, CLLocationManagerDelegate, MKM
         super.viewDidLoad()
         
         // Map Stuff
-        mapView.delegate = self
-        mapView.showsUserLocation = true
+//        mapView.delegate = self
+//        mapView.showsUserLocation = true
+//
+//        locManager.desiredAccuracy = kCLLocationAccuracyBest
+//
+//
+//        locManager.delegate = self
+//        locManager.startUpdatingLocation()
         
-        locManager.desiredAccuracy = kCLLocationAccuracyBest
+//        addSubscribers()
+//        
+//        // Setup timer to collect nearby events every second
+//        cancellable = Timer.publish(every: 1, on: .main, in: .default)
+//                .autoconnect()
+//                .sink() {_ in
+//                    self.updateNearbyEvents()
+//                }
+              
         
-        
-        locManager.delegate = self
-        locManager.startUpdatingLocation()
-        
-        addSubscribers()
-        
-        // Setup timer to collect nearby events every second
-        cancellable = Timer.publish(every: 1, on: .main, in: .default)
-                .autoconnect()
-                .sink() {_ in
-                    self.updateNearbyEvents()
-                }
-                
-        let contentView = UIHostingController(rootView: HomeMapView(searchText: searchText))
+        let contentView = UIHostingController(rootView: MapHomeView())
         view.addSubview(contentView.view)
         contentView.view.translatesAutoresizingMaskIntoConstraints = false
         contentView.view.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
@@ -100,6 +101,7 @@ class MapView:UIViewController, ObservableObject, CLLocationManagerDelegate, MKM
 //        addSearchBar()
         
     }
+    
     
     func handleTimer(_ timer: Timer) {
         updateNearbyEvents()
@@ -351,86 +353,84 @@ class MapView:UIViewController, ObservableObject, CLLocationManagerDelegate, MKM
     
 }
 
-struct HomeMapView : View {
-    @State var searchText : String
-    
-    
-    @StateObject var mapView = MapView()
-    
-    var body: some View {
-        
+//struct HomeMapView : View {
+//    @State var searchText : String
+//    
+//    @StateObject var mapView = MapView()
+//    
+//    var body: some View {
+//        
 //        ZStack {
-                
-//            MapView3
+//            MapView3()
 //                .environmentObject(mapView)
 //                .ignoresSafeArea(.all, edges: all)
-//                .environmentObject(mapData)
-//                .ignoresSafeArea(.all, edges: .all)
-            VStack {
-                
-                VStack(spacing: 0) {
-                    HStack {
-                        Image(systemName: "magnifyingglass")
-                            .foregroundColor(searchText.isEmpty ? .gray : .black)
-                        
-                        TextField("Search for nearby events", text: $searchText)
-                            .disableAutocorrection(true)
-                            .keyboardType(.alphabet)
-                            .colorScheme(.light)
-                            .overlay(
-                                Image(systemName: "xmark.circle.fill")
-                                    .padding()
-                                    .foregroundColor(.gray)
-                                    .offset(x: 10)
-                                    .opacity(searchText.isEmpty ? 0.0 : 1.0)
-                                    .onTapGesture {
-                                        searchText = ""
-                                    }
-                                ,alignment: .trailing
-                            )
-                    }
-                    .padding(.vertical, 10)
-                    .padding(.horizontal)
-                    .background(Color.white)
-
-                }
-                .padding()
-                
-                
-                Spacer()
-                
-                VStack {
-                    // Creat Event
-                    Button(action: {}, label: {
-                        Image(systemName: "plus")
-                            .font(.title2)
-                            .padding(10)
-                            .background(Color.primary)
-                            .clipShape(Circle())
-                    })
-                    
-                    // Center on Location
-                    Button(action: {}, label: {
-                        Image(systemName: "location.fill")
-                            .font(.title2)
-                            .padding(10)
-                            .background(Color.primary)
-                            .clipShape(Circle())
-                    })
-                    
-                    // Toggle between satelite and regular map view
-                    Button(action: mapView.updateMapType, label: {
-                        Image(systemName: mapView.mapType == .standard ? "network" : "map")
-                            .font(.title2)
-                            .padding(10)
-                            .background(Color.primary)
-                            .clipShape(Circle())
-                    })
-                }
-                .frame(maxWidth: .infinity, alignment: .trailing)
-                .padding()
-            }
+////                .environmentObject(mapData)
+////                .ignoresSafeArea(.all, edges: .all)
+//            VStack {
+//                
+//                VStack(spacing: 0) {
+//                    HStack {
+//                        Image(systemName: "magnifyingglass")
+//                            .foregroundColor(searchText.isEmpty ? .gray : .black)
+//                        
+//                        TextField("Search for nearby events", text: $searchText)
+//                            .disableAutocorrection(true)
+//                            .keyboardType(.alphabet)
+//                            .colorScheme(.light)
+//                            .overlay(
+//                                Image(systemName: "xmark.circle.fill")
+//                                    .padding()
+//                                    .foregroundColor(.gray)
+//                                    .offset(x: 10)
+//                                    .opacity(searchText.isEmpty ? 0.0 : 1.0)
+//                                    .onTapGesture {
+//                                        searchText = ""
+//                                    }
+//                                ,alignment: .trailing
+//                            )
+//                    }
+//                    .padding(.vertical, 10)
+//                    .padding(.horizontal)
+//                    .background(Color.white)
+//
+//                }
+//                .padding()
+//                
+//                
+//                Spacer()
+//                
+//                VStack {
+//                    // Creat Event
+//                    Button(action: {}, label: {
+//                        Image(systemName: "plus")
+//                            .font(.title2)
+//                            .padding(10)
+//                            .background(Color.primary)
+//                            .clipShape(Circle())
+//                    })
+//                    
+//                    // Center on Location
+//                    Button(action: {}, label: {
+//                        Image(systemName: "location.fill")
+//                            .font(.title2)
+//                            .padding(10)
+//                            .background(Color.primary)
+//                            .clipShape(Circle())
+//                    })
+//                    
+//                    // Toggle between satelite and regular map view
+//                    Button(action: mapView.updateMapType, label: {
+//                        Image(systemName: mapView.mapType == .standard ? "network" : "map")
+//                            .font(.title2)
+//                            .padding(10)
+//                            .background(Color.primary)
+//                            .clipShape(Circle())
+//                    })
+//                }
+//                .frame(maxWidth: .infinity, alignment: .trailing)
+//                .padding()
+//            }
 //        }
-        
-    }
-}
+//        
+//    }
+//}
