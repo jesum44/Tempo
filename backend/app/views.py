@@ -17,7 +17,6 @@ nltk.download('stopwords')
 
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
-from nltk.stem import SnowballStemmer
 
 from datetime import datetime
 # Create your views here.
@@ -37,10 +36,8 @@ def events_detail(request, slug):
 
         event_data = list(events[0])
 
-        if event_data[8]:
-            event_data[8] = event_data[8].split('&')
-        else:
-            event_data[8] = []
+        if not event_data[8]:
+            event_data[8] = ''
 
         return JsonResponse({'event': event_data})
 
@@ -70,12 +67,13 @@ def events_detail(request, slug):
         start_time = datetime.fromtimestamp(int(json_data['start_time']))
         end_time = datetime.fromtimestamp(int(json_data['end_time']))
 
-        categories = json_data['categories']
-        if categories:
-            categories_str = '&'.join(categories)
+        if 'categories' in json_data:
+            categories = json_data['categories']
+        else:
+            categories = ''
 
         cursor = connection.cursor()
-        cursor.execute('''UPDATE events SET title = %s, description = %s, address = %s, lat = %s, lon = %s, start_time = %s, end_time = %s, categories = %s WHERE event_id = %s;''', [title, description, address, lat, lon, start_time, end_time, categories_str, slug])
+        cursor.execute('''UPDATE events SET title = %s, description = %s, address = %s, lat = %s, lon = %s, start_time = %s, end_time = %s, categories = %s WHERE event_id = %s;''', [title, description, address, lat, lon, start_time, end_time, categories, slug])
 
         return HttpResponse(status=201)
 
@@ -122,15 +120,16 @@ def events(request):
         start_time = datetime.fromtimestamp(int(json_data['start_time']))
         end_time = datetime.fromtimestamp(int(json_data['end_time']))
 
-        categories = json_data['categories']
-        if categories:
-            categories_str = '&'.join(categories)
+        if 'categories' in json_data:
+            categories = json_data['categories']
+        else:
+            categories = ''
 
         cursor = connection.cursor()
         cursor.execute('INSERT INTO events '
             '(event_id, user_id, title, description, address, lat, lon, start_time, end_time, categories) '
             'VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s);',
-            (event_id, user_id, title, description, address, lat, lon, start_time, end_time, categories_str))
+            (event_id, user_id, title, description, address, lat, lon, start_time, end_time, categories))
 
         return HttpResponse(status=201)
 
@@ -166,7 +165,6 @@ def events(request):
 
 
 def score_lists(query_words: list, last_query: str, event_str: str):
-    # stemmer = SnowballStemmer('english')
     event_words = [word for word in word_tokenize(event_str.lower()) if not word in stopwords.words()]
     event_len = len(event_words)
 
@@ -192,10 +190,17 @@ def search(request):
         start_lon = float(request.GET.get('lon'))
         query = request.GET.get('q').lower()
 
+        json_data = json.loads(request.body)
+        desired_category = None
+        if 'categories' in json_data:
+            desired_category = json_data['categories']
+        elif 'category' in json_data:
+            desired_category = json_data['category']
+
         cursor = connection.cursor()
-        cursor.execute('SELECT x.event_id, x.distance, x.title, x.description, x.user_id FROM'
+        cursor.execute('SELECT x.event_id, x.distance, x.title, x.description, x.user_id, x.categories FROM'
                        '('
-                            'SELECT event_id, user_id, title, lat, lon, start_time, end_time, description, '
+                            'SELECT event_id, user_id, title, lat, lon, start_time, end_time, description, categories, '
                             'SQRT('
                                 'POW(69.1 * (lat - %s), 2) + POW(69.1 * (%s - lon) * COS(lat / 57.3), 2)'
                             ') AS distance '
@@ -207,7 +212,6 @@ def search(request):
         query_words = word_tokenize(query)
         last_query = query_words.pop()
 
-        # stemmer = SnowballStemmer('english')
         query_words = [word for word in query_words if not word in stopwords.words()]
 
         nearby_events = cursor.fetchall()
@@ -215,6 +219,13 @@ def search(request):
         short_events = []
 
         for event in nearby_events:
+            if desired_category:
+                category = event[5]
+                if isinstance(desired_category, list) and category not in desired_category:
+                    continue
+                elif isinstance(desired_category, str) and category != desired_category:
+                    continue
+
             event_id = event[0]
             distance = event[1]
             title = event[2]
