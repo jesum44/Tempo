@@ -190,12 +190,13 @@ def search(request):
         start_lon = float(request.GET.get('lon'))
         query = request.GET.get('q').lower()
 
-        json_data = json.loads(request.body)
         desired_category = None
-        if 'categories' in json_data:
-            desired_category = json_data['categories']
-        elif 'category' in json_data:
-            desired_category = json_data['category']
+        if request.body:
+            json_data = json.loads(request.body)
+            if 'categories' in json_data:
+                desired_category = json_data['categories']
+            elif 'category' in json_data:
+                desired_category = json_data['category']
 
         cursor = connection.cursor()
         cursor.execute('SELECT x.event_id, x.distance, x.title, x.description, x.user_id, x.categories FROM'
