@@ -21,8 +21,6 @@ import Alamofire
 //    ["42.295904", "-83.719227", "Jam Sesh"],
 //    ["42.293904", "-83.720686", "Free Food"],
 //]
-
-
 // change this value whenever an event is clicked so it can be used for the modal
 var GLOBAL_CURRENT_EVENT = Event(event_id: "123456abc", title: "Shrek's Grad Party", address: "987 Swamp Street Ann Arbor, MI", latitude: "42.2768206", longitude: "-83.729657", start_time: "1648408690", end_time: "1648408690", description: "Food & Drinks provided. Live music by Smash Mouth.")
 
@@ -41,6 +39,7 @@ class ARView: UIViewController, CLLocationManagerDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+       
         
         GLOBAL_AR_VIEW = self;
         
@@ -48,13 +47,18 @@ class ARView: UIViewController, CLLocationManagerDelegate {
         locmanager.desiredAccuracy = kCLLocationAccuracyBest
         locmanager.requestWhenInUseAuthorization()
         locmanager.startUpdatingLocation()
-        
+    
+    
 //        getNearbyEvents(nil)
         sceneLocationView.run()
         self.addButtons()
     }
     
+    func authenticate() {
+        UIApplication.shared.keyWindow?.rootViewController?.present(SignInView(), animated: true, completion: nil)
+    }
     func addButtons() {
+        self.authenticate()
         //******** CreateEvent Code Below:
         // add "+" button to create an event
         let buttonFactory = CreateEventsButton()
@@ -304,5 +308,4 @@ extension UIView {
         return cview
     }
 }
-
 
