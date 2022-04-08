@@ -79,7 +79,6 @@ struct SwiftUIEventInfoView: View {
     @State var toEditEvent: Int? = nil
     
     var body: some View {
-        NavigationView {
             VStack {
                 VStack(spacing: vstackSpacing) {
                     HStack {
@@ -90,6 +89,7 @@ struct SwiftUIEventInfoView: View {
                                 .font(.largeTitle.bold())
                                 .foregroundColor(.red)
                                 .padding(.bottom, 5)
+                                .padding(.top, 100)
                         }
                         Spacer()
                         // share button
@@ -108,6 +108,7 @@ struct SwiftUIEventInfoView: View {
                                 ])
                             })
                         }
+                        .padding(.top, 100)
                         Spacer().frame(width: sideSpacerWidth)
                     }
                     
@@ -178,9 +179,7 @@ struct SwiftUIEventInfoView: View {
                         Spacer().frame(width: sideSpacerWidth)
                     }
                 }
-                Spacer()
             }
-        }
     }
 }
 

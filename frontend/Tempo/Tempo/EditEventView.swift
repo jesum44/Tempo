@@ -111,12 +111,11 @@ func toDate(isoDate: String)-> Date?{
     let dateFormatter = ISO8601DateFormatter()
     let date = dateFormatter.date(from:isoDate)!
     return date
-    }
+}
 
 func editEventPutRequest(_ parameters: [String: String], eventId: String) async -> [String] {
-
-    let url = "https://54.175.206.175/events/" + eventId + "/"
     
+    let url = "https://54.175.206.175/events/" + eventId + "/"
     guard let encoded = try? JSONEncoder().encode(parameters) else {
         print("JSONEncoder error")
         return ["Json Encoding"]
@@ -125,7 +124,6 @@ func editEventPutRequest(_ parameters: [String: String], eventId: String) async 
     var request = URLRequest(url: URL(string: url)!)
     request.setValue("application/json", forHTTPHeaderField: "Content-Type")
     request.httpMethod = "PUT"
-    
     do {
         let (data, res) = try await URLSession.shared.upload(for: request, from: encoded)
         let httpRes = res as! HTTPURLResponse
@@ -144,18 +142,21 @@ func editEventPutRequest(_ parameters: [String: String], eventId: String) async 
 
 func handleDone(title: String, description: String, address: String, startTime: Date, endTime: Date, eventId: String)  async {
     let parameters: [String: String] = [
-        "user_id": "admin",
         "title": title,
-        "description":description,
+        "description": description,
         "address": address,
         "start_time":
             String(Int(startTime.timeIntervalSince1970)),
         "end_time":
             String(Int(endTime.timeIntervalSince1970)),
-        
     ]
-        await editEventPutRequest(parameters, eventId: eventId)
+    let err = await editEventPutRequest(parameters, eventId: eventId)
+    
+    if !err.isEmpty {
+       //error occured
+    } else {
         await GLOBAL_AR_VIEW?.getNearbyEvents(nil)
+    }
 }
 
 func closeModal(delegate: SheetDismisserProtocol) {
