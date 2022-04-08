@@ -134,6 +134,36 @@ class MapViewModel: UIViewController, ObservableObject, CLLocationManagerDelegat
             
     }
     
+    func topMostController() -> UIViewController {
+        var topController: UIViewController = UIApplication.shared.keyWindow!.rootViewController!
+        while(topController.presentedViewController != nil) {
+            topController = topController.presentedViewController!
+        }
+        return topController
+        
+    }
+
+    
+    @objc func postEvent() {
+        let topVC = topMostController()
+        
+        let uiStoryboard = UIStoryboard(name: "CreateEvent", bundle: nil)
+        
+        let vcToPresent = uiStoryboard.instantiateViewController(withIdentifier: "CreateEventStoryboardID") as! CreateEventView
+        
+        topVC.present(vcToPresent, animated: true, completion: nil)
+    }
+    
+    @objc func toggleAR() {
+        let topVC = topMostController()
+        
+        let arView = ARView()
+        let vcToPresent = UINavigationController(rootViewController: arView)
+        vcToPresent.modalPresentationStyle = .fullScreen
+        topVC.present(vcToPresent, animated: true, completion: nil)
+
+    }
+    
     func searchQuery() {
         let locManager = CLLocationManager()
         
