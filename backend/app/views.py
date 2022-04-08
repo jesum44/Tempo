@@ -52,6 +52,9 @@ def register(request):
         email = json_data['email']
         user = User.objects.create_user(username, email, password)
         user.save()
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
         return HttpResponse(status=201)
 
 @csrf_exempt
