@@ -7,6 +7,7 @@ from django.http import JsonResponse, HttpResponse
 from django.db import connection
 from django.views.decorators.csrf import csrf_exempt
 
+from math import radians, cos, sin, asin, sqrt
 import json
 import uuid
 import geocoder
@@ -38,6 +39,36 @@ def events_detail(request, slug):
 
         if not event_data[8]:
             event_data[8] = ''
+
+        json_data = json.loads(request.body)
+        user_lat = json_data['lat']
+        user_lon = json_data['lon']
+
+        event_lat = event_data[3]
+        event_lon = event_data[4]
+
+        # formula for distance drawn from GeeksForGeeks:
+        # https://www.geeksforgeeks.org/program-distance-two-points-earth/#:~:text=For%20this%20divide%20the%20values,is%20the%20radius%20of%20Earth.
+
+        # The math module contains a function named
+        # radians which converts from degrees to radians.
+        user_lon = radians(user_lon)
+        event_lon = radians(event_lon)
+        user_lat = radians(user_lat)
+        event_lat = radians(event_lat)
+        
+        # Haversine formula
+        dlon = event_lon - user_lon
+        dlat = event_lat - user_lat
+        a = sin(dlat / 2)**2 + cos(user_lat) * cos(event_lat) * sin(dlon / 2)**2
+    
+        c = 2 * asin(sqrt(a))
+        
+        # Radius of earth in kilometers. Use 3956 for miles
+        r = 3956
+        
+        # calculate the result
+        event_data.append(c * r)
 
         return JsonResponse({'event': event_data})
 
