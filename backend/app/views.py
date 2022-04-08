@@ -21,7 +21,41 @@ from nltk.corpus import stopwords
 
 from datetime import datetime
 # Create your views here.
+from django.contrib.auth.models import User
+from django.contrib.auth import authenticate, login, logout
 
+@csrf_exempt
+def login_view(request):
+    if request.method == 'POST':
+        json_data = json.loads(request.body)
+        username = json_data['username']
+        password = json_data['password']
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            return HttpResponse(status=200)
+        else:
+            return HttpResponse(status=404)
+
+@csrf_exempt
+def logout_view(request):
+    if request.method == 'POST':
+        logout(request)
+        return HttpResponse(status=200)
+
+@csrf_exempt
+def register(request):
+    if request.method == 'POST':
+        json_data = json.loads(request.body)
+        username = json_data['username']
+        password = json_data['password']
+        email = json_data['email']
+        user = User.objects.create_user(username, email, password)
+        user.save()
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+        return HttpResponse(status=201)
 
 @csrf_exempt
 def events_detail(request, slug):
@@ -73,6 +107,8 @@ def events_detail(request, slug):
         return JsonResponse({'event': event_data})
 
     elif request.method == 'PUT':
+        if not request.user.is_authenticated:
+            return HttpResponse(status=401)
         cursor = connection.cursor()
         cursor.execute(
             '''SELECT event_id FROM events WHERE event_id = %s;''', [slug]
