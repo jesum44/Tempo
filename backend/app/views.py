@@ -74,9 +74,8 @@ def events_detail(request, slug):
         if not event_data[8]:
             event_data[8] = ''
 
-        json_data = json.loads(request.body)
-        user_lat = json_data['lat']
-        user_lon = json_data['lon']
+        user_lat = float(request.GET.get('lat'))
+        user_lon = float(request.GET.get('lon'))
 
         event_lat = event_data[3]
         event_lon = event_data[4]
