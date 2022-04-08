@@ -37,10 +37,8 @@ def events_detail(request, slug):
 
         event_data = list(events[0])
 
-        if event_data[8]:
-            event_data[8] = event_data[8].split('&')
-        else:
-            event_data[8] = []
+        if not event_data[8]:
+            event_data[8] = ''
 
         return JsonResponse({'event': event_data})
 
@@ -70,12 +68,13 @@ def events_detail(request, slug):
         start_time = datetime.fromtimestamp(int(json_data['start_time']))
         end_time = datetime.fromtimestamp(int(json_data['end_time']))
 
-        categories = json_data['categories']
-        if categories:
-            categories_str = '&'.join(categories)
+        if 'categories' in json_data:
+            categories = json_data['categories']
+        else:
+            categories = ''
 
         cursor = connection.cursor()
-        cursor.execute('''UPDATE events SET title = %s, description = %s, address = %s, lat = %s, lon = %s, start_time = %s, end_time = %s, categories = %s WHERE event_id = %s;''', [title, description, address, lat, lon, start_time, end_time, categories_str, slug])
+        cursor.execute('''UPDATE events SET title = %s, description = %s, address = %s, lat = %s, lon = %s, start_time = %s, end_time = %s, categories = %s WHERE event_id = %s;''', [title, description, address, lat, lon, start_time, end_time, categories, slug])
 
         return HttpResponse(status=201)
 
@@ -122,15 +121,16 @@ def events(request):
         start_time = datetime.fromtimestamp(int(json_data['start_time']))
         end_time = datetime.fromtimestamp(int(json_data['end_time']))
 
-        categories = json_data['categories']
-        if categories:
-            categories_str = '&'.join(categories)
+        if 'categories' in json_data:
+            categories = json_data['categories']
+        else:
+            categories = ''
 
         cursor = connection.cursor()
         cursor.execute('INSERT INTO events '
             '(event_id, user_id, title, description, address, lat, lon, start_time, end_time, categories) '
             'VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s);',
-            (event_id, user_id, title, description, address, lat, lon, start_time, end_time, categories_str))
+            (event_id, user_id, title, description, address, lat, lon, start_time, end_time, categories))
 
         return HttpResponse(status=201)
 
