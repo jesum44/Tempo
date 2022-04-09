@@ -69,13 +69,16 @@ struct MapHomeView: View {
                                     .padding(10)
                                     .background(Color.primary)
                                     .clipShape(Circle())
-                                
                             })
                             .font(.system(size: 10))
                             
                             // Toggle AR
                             Button(action: mapData.toggleAR, label: {
-                                Image(systemName: "binoculars.fill")
+                                Image("goggles")
+                                    .renderingMode(.template)
+                                    .foregroundColor(.blue)
+                                    .aspectRatio(contentMode: .fit)
+                                    .frame(width:30, height:30)
                                     .font(.title)
                                     .padding(10)
                                     .background(Color.primary)
@@ -122,7 +125,11 @@ struct MapHomeView: View {
                             
                             // Toggle AR
                             Button(action: mapData.toggleAR, label: {
-                                Image(systemName: "binoculars.fill")
+                                Image("goggles")
+                                    .renderingMode(.template)
+                                    .foregroundColor(.blue)
+                                    .aspectRatio(contentMode: .fit)
+                                    .frame(width:30, height:30)
                                     .font(.title)
                                     .padding(10)
                                     .background(Color.primary)

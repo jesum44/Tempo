@@ -177,17 +177,6 @@ class MapView:UIViewController, ObservableObject, CLLocationManagerDelegate, MKM
     }
     
     
-//    func addSearchBar() {
-//       let SV = SearchView().environmentObject(MapViewModel())
-//       let SearchController = UIHostingController(rootView: AnyView(SV))
-//       if let search = SearchController.view {
-//           search.translatesAutoresizingMaskIntoConstraints = false
-//           self.view.addSubview(search)
-//
-//           self.addChild(SearchController)
-//       }
-//    }
-    
     func updateMapType() {
         if mapType == .standard {
             mapType = .hybrid
