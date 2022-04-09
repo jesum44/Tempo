@@ -105,7 +105,8 @@ def events_detail(request, slug):
         r = 3956
         
         # calculate the result
-        event_data.append(c * r)
+        dist = c * r
+        event_data.append(round(dist, 1))
 
         return JsonResponse({'event': event_data})
 
