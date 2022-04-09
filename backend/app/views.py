@@ -75,7 +75,11 @@ def events_detail(request, slug):
             event_data[8] = ''
 
         user_lat = float(request.GET.get('lat'))
-        user_lon = float(request.GET.get('lon'))
+
+        user_lon_str = request.GET.get('lon')
+        if user_lon_str[-1] == '/':
+            user_lon_str = user_lon_str[:-1]
+        user_lon = float(user_lon_str)
 
         event_lat = event_data[3]
         event_lon = event_data[4]
@@ -256,16 +260,21 @@ def search(request):
         start_lon = float(request.GET.get('lon'))
         query = request.GET.get('q').lower()
 
-        desired_category = None
-        if request.body:
-            json_data = json.loads(request.body)
-            if 'categories' in json_data:
-                desired_category = json_data['categories']
-            elif 'category' in json_data:
-                desired_category = json_data['category']
+        if query[-1] == '/':
+            query = query[:-1]
+
+        if 'category' in request.GET:
+            desired_category = str(request.GET.get('category'))
+        elif 'categories' in request.GET:
+            desired_category = str(request.GET.get('categories'))
+        else:
+            desired_category = None
+
+        if desired_category and desired_category[-1] == '/':
+            desired_category = desired_category[:-1]
 
         cursor = connection.cursor()
-        cursor.execute('SELECT x.event_id, x.distance, x.title, x.description, x.user_id, x.categories FROM'
+        cursor.execute('SELECT x.event_id, x.distance, x.title, x.description, x.user_id, x.categories, x.lat, x.lon FROM'
                        '('
                             'SELECT event_id, user_id, title, lat, lon, start_time, end_time, description, categories, '
                             'SQRT('
@@ -288,9 +297,7 @@ def search(request):
         for event in nearby_events:
             if desired_category:
                 category = event[5]
-                if isinstance(desired_category, list) and category not in desired_category:
-                    continue
-                elif isinstance(desired_category, str) and category != desired_category:
+                if category != desired_category:
                     continue
 
             event_id = event[0]
@@ -298,6 +305,8 @@ def search(request):
             title = event[2]
             description = event[3]
             user_id = event[4]
+            lat = event[6]
+            lon = event[7]
 
             score = 0.0
 
@@ -310,7 +319,7 @@ def search(request):
                 score += 1
 
             scores.append(score)
-            short_events.append({'event_id': event_id, 'title': title})
+            short_events.append({'event_id': event_id, 'title': title, 'lat': lat, 'lon': lon})
 
         sorted_events = [event for _, event in sorted(zip(scores, short_events), key=lambda pair: pair[0], reverse=True)]
         return JsonResponse({'event_names': sorted_events[:10]})
