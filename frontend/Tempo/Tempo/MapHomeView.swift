@@ -15,7 +15,7 @@ struct MapHomeView: View {
     let timer = Timer.publish(every: 1, tolerance: 0.5, on: .main, in: .common).autoconnect()
     @StateObject var mapData = MapViewModel()
     @State var locationManager = CLLocationManager()
-    @State var predictableValues: Array<String> = ["Event A", "Event B", "Cam's party", "Frat event"]
+    @State var predictableValues: Array<String> =  EventStore.shared.events.compactMap{$0.title}
     @State var predictedValue: Array<String> = []
     
     var body: some View {
