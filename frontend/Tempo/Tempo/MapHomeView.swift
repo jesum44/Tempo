@@ -240,8 +240,6 @@ struct PredictingTextField: View {
         .background(.white)
         .opacity(self.textFieldInput.isEmpty ? 0.75 : 1.0)
         .cornerRadius(0.10)
-        
-//        TextField(self.textFieldTitle ?? "", text: self.$textFieldInput, onEditingChanged: { editing in self.realTimePrediction(status: editing)}, onCommit: { self.makePrediction()})
     }
     
     /// Schedules prediction based on interval and only a if input is being made
@@ -263,7 +261,7 @@ struct PredictingTextField: View {
         return smallString.prefix(1).capitalized + smallString.dropFirst()
     }
     
-    /// Makes prediciton based on current input
+    // Makes prediciton based on current input
     private func makePrediction() {
         self.predictedValues = []
         if !self.textFieldInput.isEmpty{

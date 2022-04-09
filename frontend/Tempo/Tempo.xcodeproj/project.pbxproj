@@ -126,7 +126,6 @@
 				EB6ECB1F27E019580040C0E2 /* LaunchScreen.storyboard */,
 				EB6ECB2227E019580040C0E2 /* Info.plist */,
 				EB6ECB2827E01CBD0040C0E2 /* ARView.swift */,
-				7657E88C27E2DA95001A785F /* CreateEventsButton.swift */,
 				4428AF3A27E22ECA00248B2E /* Event.swift */,
 				4428AF3C27E22EDB00248B2E /* EventStore.swift */,
 				7657E88827E2D73D001A785F /* MapView.swift */,
@@ -136,6 +135,7 @@
 				C980BAC427FAD24A0020D518 /* SearchBarView.swift */,
 				C9F687C127FAF3F8007A05C0 /* ContentView.swift */,
 				7657E89227E3C827001A785F /* MapView2.swift */,
+				7657E88C27E2DA95001A785F /* CreateEventsButton.swift */,
 				7657E88E27E3C4D3001A785F /* createToggle.swift */,
 				8A73F14227F54A3400915F9F /* extensions.swift */,
 			);

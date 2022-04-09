@@ -188,32 +188,31 @@ class MapView:UIViewController, ObservableObject, CLLocationManagerDelegate, MKM
         }
     }
 
-    
-    func addButtons() {
-        //******** CreateEvent Code Below:
-        // add "+" button to create an event
-        let buttonFactory = CreateEventsButton()
-        let frame = self.view.safeAreaLayoutGuide
-
-        let button = buttonFactory.createButton(frame:frame)
-        
-        button.addTarget(self, action: #selector(createEventButtonTapped), for: .touchUpInside)
-        
-        let toggleFactory = createToggle()
-        let toggleContainer = toggleFactory.createButtonContainer(screenHeight: screenHeight)
-        let mapButton = toggleFactory.createMapButton(screenHeight: screenHeight)
-        let ARButton = toggleFactory.createARButton(screenHeight: screenHeight)
-        mapButton.isEnabled = false
-        ARButton.isEnabled = true
-        ARButton.addTarget(self, action:#selector(toggleAR), for: .touchUpInside)
-        
-        // add + button to view
-        self.view.addSubview(button)
-        self.view.addSubview(toggleContainer)
-        
-        toggleContainer.addArrangedSubview(mapButton)
-        toggleContainer.addArrangedSubview(ARButton)
-    }
+//
+//    func addButtons() {
+//        //******** CreateEvent Code Below:
+//        // add "+" button to create an event
+////        let buttonFactory = CreateEventsButton()
+//        let frame = self.view.safeAreaLayoutGuide
+////
+////        let button = buttonFactory.createButton(frame:frame)
+////
+////        button.addTarget(self, action: #selector(createEventButtonTapped), for: .touchUpInside)
+////
+//        let toggleFactory = createToggle()
+//        let toggleContainer = toggleFactory.createButtonContainer(screenHeight: screenHeight)
+//        let mapButton = toggleFactory.createMapButton(screenHeight: screenHeight)
+//        let eventButton = toggleFactory.createEventButton(frame: frame)
+//        mapButton.isEnabled = false
+//        eventButton.addTarget(self, action: #selector(createEventButtonTapped), for: .touchUpInside)
+//
+//        // add + button to view
+////        self.view.addSubview(button)
+//        self.view.addSubview(toggleContainer)
+//
+//        toggleContainer.addArrangedSubview(mapButton)
+//        toggleContainer.addArrangedSubview(eventButton)
+//    }
     
     func addMapHomeView() {
 //        let mapHomeView = HomeMapView(searchText: searchText)

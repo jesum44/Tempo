@@ -10,42 +10,44 @@ import UIKit
 import SwiftUI
 
 final class createToggle {
+    private var frame:UILayoutGuide;
     
-    func createButtonContainer(screenHeight: CGFloat) -> UIStackView {
-        
+    init(frame: UILayoutGuide){
+        self.frame = frame;
+    }
+    
+    func createButtonContainer() -> UIStackView {
         let buttonContainer = UIStackView(frame:CGRect(
-            x:30, y:screenHeight-130, width: 200, height:70))
-        buttonContainer.axis = .horizontal
-        buttonContainer.backgroundColor = UIColor.white.withAlphaComponent(0.7)
-        buttonContainer.layer.cornerRadius = 10
+            x:self.frame.layoutFrame.width-80, y:self.frame.layoutFrame.height-100, width: 60, height:130))
+        buttonContainer.axis = .vertical
         buttonContainer.distribution = .fillEqually
+        buttonContainer.spacing = 10
         
         return buttonContainer
     }
     
-    func createMapButton(screenHeight: CGFloat) -> UIButton {
-        let mapToggle = UIButton(frame:CGRect(
-            x:30, y:screenHeight-130, width: 50, height:50))
-        let mapImg = UIImage(named: "mapIcon")?.withTintColor(.black)
+    func createMapButton() -> UIButton {
+        let mapToggle = UIButton()
+        let mapImg = UIImage(named: "mapIcon")?.withTintColor(UIColor(red: 0.0, green: 122.0/255.0, blue: 1.0, alpha: 1.0))
         mapToggle.setImage(mapImg, for: .normal)
-        let mapImg2 = UIImage(named: "mapIcon")?.withTintColor(.gray)
-        mapToggle.setImage(mapImg2, for: .disabled)
+        mapToggle.imageView?.contentMode = .scaleAspectFit
+        mapToggle.backgroundColor = .white
+        mapToggle.layer.cornerRadius = 30
         
         return mapToggle
     }
     
-    func createARButton(screenHeight: CGFloat) -> UIButton {
-        let VRToggle = UIButton(frame: CGRect(
-            x: 80, y: screenHeight-130, width: 50, height: 50))
-        VRToggle.backgroundColor = .blue.withAlphaComponent(0)
-        let VRImg = UIImage(named: "goggles")?.withTintColor(.black)
-        VRToggle.setImage(VRImg, for: .normal)
-        let VRImg2 = UIImage(named:"goggles")?.withTintColor(.gray)
-        VRToggle.setImage(VRImg2, for: .disabled)
+    func createEventButton() -> UIButton {
+        var button = UIButton.Configuration.plain()
         
-        return VRToggle
-    }
-    
-    
-    
+//        button.contentHorizontalAlignment = .fill
+//        button.contentVerticalAlignment = .fill
+        button.image = UIImage(systemName: "plus.circle.fill", withConfiguration: UIImage.SymbolConfiguration(scale: .large))
+        button.imagePadding = 5
+        button.background.backgroundColor = .white
+        button.cornerStyle = .capsule
+        
+        let realButton = UIButton(configuration: button)
+        return realButton
+    } 
 }
