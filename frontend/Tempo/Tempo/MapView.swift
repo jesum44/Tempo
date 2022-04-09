@@ -134,7 +134,8 @@ final class MapView:UIViewController, CLLocationManagerDelegate, GMSMapViewDeleg
             longitude: event.longitude,
             start_time: event.start_time,
             end_time:  event.end_time,
-            description: event.description
+            description: event.description,
+            distance: event.distance
         )
         
         // now, launch the event info modal, filled with info about the global event

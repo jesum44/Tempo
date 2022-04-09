@@ -9,4 +9,5 @@ struct Event {
     var start_time: String?
     var end_time: String?
     var description: String?
+    var distance: String?
 }

@@ -50,8 +50,6 @@ final class EventStore {
         }
     
     func getEvents(lat: Double, lon: Double, onCompleted: @escaping () -> ()) {
-        print(lat)
-        print(lon)
             guard var apiUrl = URLComponents(string: serverUrl+"events") else {
                 print("getEvents: Bad URL")
                 return
@@ -84,7 +82,7 @@ final class EventStore {
                 let eventsReceived = jsonObj["events"] as? [[Any]] ?? []
                 self.events = [Event]()
                 for eventEntry in eventsReceived {
-                    if eventEntry.count == self.nFields {
+                    if eventEntry.count == self.nFields - 1{
                         self.events.append(Event(event_id: eventEntry[0] as! String?,
                                                  title: eventEntry[1] as! String?,
                                                  address: eventEntry[2] as! String?,
@@ -92,7 +90,8 @@ final class EventStore {
                                                  longitude: "\(eventEntry[4])",
                                                  start_time: eventEntry[5] as! String?,
                                                  end_time:  eventEntry[6] as! String?,
-                                                 description: eventEntry[7] as! String?))
+                                                 description: eventEntry[7] as! String?,
+                                                 distance: "filler"))
                     } else {
                         print("getEvents: Received unexpected number of fields: \(eventEntry.count) instead of \(self.nFields).")
                     }

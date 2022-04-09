@@ -148,7 +148,17 @@ struct SwiftUIEventInfoView: View {
                         // description
                         VStack(alignment: .leading, spacing: vstackSpacing) {
                             Text(event.description!)
-                                .padding(.bottom, 50)
+                        }
+                        // no width to push description to left just like in Figma
+                        Spacer()
+                    }
+                    
+                    HStack {
+                        Spacer().frame(width: sideSpacerWidth)
+                        // distance
+                        VStack(alignment: .leading, spacing: vstackSpacing) {
+                            Text(event.distance! + " miles")
+                                .padding(.bottom, 30)
                         }
                         // no width to push description to left just like in Figma
                         Spacer()

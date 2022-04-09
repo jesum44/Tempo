@@ -22,7 +22,7 @@ import Alamofire
 //    ["42.293904", "-83.720686", "Free Food"],
 //]
 // change this value whenever an event is clicked so it can be used for the modal
-var GLOBAL_CURRENT_EVENT = Event(event_id: "123456abc", title: "Shrek's Grad Party", address: "987 Swamp Street Ann Arbor, MI", latitude: "42.2768206", longitude: "-83.729657", start_time: "1648408690", end_time: "1648408690", description: "Food & Drinks provided. Live music by Smash Mouth.")
+var GLOBAL_CURRENT_EVENT = Event(event_id: "123456abc", title: "Shrek's Grad Party", address: "987 Swamp Street Ann Arbor, MI", latitude: "42.2768206", longitude: "-83.729657", start_time: "1648408690", end_time: "1648408690", description: "Food & Drinks provided. Live music by Smash Mouth.", distance: ".1 miles")
 
 // use this to call getNearbyEvents in other files
 var GLOBAL_AR_VIEW: ARView? = nil
@@ -32,6 +32,8 @@ class ARView: UIViewController, CLLocationManagerDelegate {
     private let locmanager = CLLocationManager()
     private var lat = 0.0
     private var lon = 0.0
+    var events = [Event]()
+    private let nFields = Mirror(reflecting: Event()).children.count
     
     // use this dict to get the eventID of a tapped location node
     var locationNodesAndTheirEventIDsDict: [LocationAnnotationNode:String] = [:]
@@ -39,7 +41,7 @@ class ARView: UIViewController, CLLocationManagerDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-       
+        
         
         GLOBAL_AR_VIEW = self;
         
@@ -47,9 +49,9 @@ class ARView: UIViewController, CLLocationManagerDelegate {
         locmanager.desiredAccuracy = kCLLocationAccuracyBest
         locmanager.requestWhenInUseAuthorization()
         locmanager.startUpdatingLocation()
-    
-    
-//        getNearbyEvents(nil)
+        
+        
+        //        getNearbyEvents(nil)
         sceneLocationView.run()
         self.addButtons()
     }
@@ -63,7 +65,7 @@ class ARView: UIViewController, CLLocationManagerDelegate {
         // add "+" button to create an event
         let buttonFactory = CreateEventsButton()
         let frame = self.view.safeAreaLayoutGuide
-
+        
         let button = buttonFactory.createButton(frame:frame)
         
         button.addTarget(self, action: #selector(createEventButtonTapped), for: .touchUpInside)
@@ -85,22 +87,22 @@ class ARView: UIViewController, CLLocationManagerDelegate {
     }
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-           if let location = locations.last {
-               
-               // If the user has moved a significant distance, call getNearbyEvent again
-               if (abs(lat - location.coordinate.latitude) > 0.001 || abs(lon - location.coordinate.longitude) > 0.001) {
-                   lat = location.coordinate.latitude
-                   lon = location.coordinate.longitude
-                   getNearbyEvents(nil)
-               }
-               
-               // Get user's location
-               lat = location.coordinate.latitude
-               lon = location.coordinate.longitude
+        if let location = locations.last {
             
-           }
-       
-       }
+            // If the user has moved a significant distance, call getNearbyEvent again
+            if (abs(lat - location.coordinate.latitude) > 0.001 || abs(lon - location.coordinate.longitude) > 0.001) {
+                lat = location.coordinate.latitude
+                lon = location.coordinate.longitude
+                getNearbyEvents(nil)
+            }
+            
+            // Get user's location
+            lat = location.coordinate.latitude
+            lon = location.coordinate.longitude
+            
+        }
+        
+    }
     
     @objc func toggleMap(sender: UIButton!){
         sender.isEnabled = false
@@ -118,7 +120,7 @@ class ARView: UIViewController, CLLocationManagerDelegate {
         // Storyboard ID as below
         let vc = storyboard.instantiateViewController(
             withIdentifier: "CreateEventStoryboardID") as! CreateEventView
-
+        
         let navController = UINavigationController(rootViewController: vc)
         
         self.present(navController, animated: true, completion: nil)
@@ -136,14 +138,14 @@ class ARView: UIViewController, CLLocationManagerDelegate {
         getNearbyEvents(nil)
     }
     
-
+    
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-
+        
         sceneLocationView.frame = view.bounds
     }
     
-
+    
     
     func getNearbyEvents(_ sender: UIAction?) {
         print("getNearbyEventsCalled")
@@ -152,7 +154,7 @@ class ARView: UIViewController, CLLocationManagerDelegate {
         
         if (CLLocationManager.authorizationStatus() == CLAuthorizationStatus.authorizedWhenInUse
             || CLLocationManager.authorizationStatus() == CLAuthorizationStatus.authorizedAlways
-            )
+        )
         {
             guard let currentLocation = locManager.location else {
                 print("Error: ARView:getNearbyEvents - Unable to acquire user's location!")
@@ -174,9 +176,8 @@ class ARView: UIViewController, CLLocationManagerDelegate {
                     let lat = Double( event.latitude! )!
                     let lon = Double( event.longitude! )!
                     let title = event.title!
-                                
                     let coordinate = CLLocationCoordinate2D(latitude: lat, longitude: lon)
-
+                    
                     let location = CLLocation(coordinate: coordinate, altitude: 300)
                     //let image = UIImage(systemName: "eye")!
                     let eventLabel = UIView.prettyLabeledView(
@@ -194,7 +195,7 @@ class ARView: UIViewController, CLLocationManagerDelegate {
             }
             
         }
-                
+        
         self.view.addSubview(sceneLocationView)
         self.addButtons()
         
@@ -210,14 +211,14 @@ class ARView: UIViewController, CLLocationManagerDelegate {
     // runs when a event popup is tapped
     @objc func handleARObjectTap(gestureRecognizer: UITapGestureRecognizer) {
         guard gestureRecognizer.view != nil else { return }
-
+        
         if gestureRecognizer.state == .ended {
-
+            
             // Look for an object directly under the touch location
             let location: CGPoint = gestureRecognizer.location(in: sceneLocationView)
             let hits = sceneLocationView.hitTest(location, options: nil)
             if !hits.isEmpty {
-
+                
                 // select the first match
                 if let tappedNode = hits.first?.node.parent as? LocationAnnotationNode {
                     let tappedNodeEventID = self.locationNodesAndTheirEventIDsDict[tappedNode]!;
@@ -229,47 +230,64 @@ class ARView: UIViewController, CLLocationManagerDelegate {
     }
     
     // runs when a event popup is tapped
-    func handleEventPopupTapped(eventID: String) {
-        // get event's full info
-        let getURL = "https://54.175.206.175/events/" + eventID + "/"
-        AF.request(getURL, method: .get).response { res in
-            //let resData = String(data: res.data!, encoding: String.Encoding.utf8)!
-            if let json = try? JSON(data: res.data!) {
-                let eventEntry = json["event"].arrayValue
-
-                // set global event to the one just tapped
-                GLOBAL_CURRENT_EVENT = Event(
-                    event_id: eventEntry[0].stringValue,
-                    title: eventEntry[1].stringValue,
-                    address: eventEntry[2].stringValue,
-                    latitude: "\(eventEntry[3].stringValue)",
-                    longitude: "\(eventEntry[4].stringValue)",
-                    start_time: eventEntry[5].stringValue,
-                    end_time:  eventEntry[6].stringValue,
-                    description: eventEntry[7].stringValue
-                )
-
-                // now, launch the event info modal, filled with info about the global event
-                let storyboard = UIStoryboard(name: "EventInfoView", bundle: nil)
-                let vc = storyboard.instantiateViewController(withIdentifier: "EventInfoViewStoryboardID") as! EventInfoView
-
-                let navController = UINavigationController(rootViewController: vc)
-
-                // make modal half screen, comment this if statement out for full screen
-                // https://stackoverflow.com/a/67988976
-                if let pc =
-                    navController.presentationController
-                        as? UISheetPresentationController {
-
-                    pc.detents = [.medium()]
+    // runs when a event popup is tapped
+        func handleEventPopupTapped(eventID: String) {
+            
+            let locManager = CLLocationManager()
+            locManager.requestWhenInUseAuthorization()
+            
+            if (CLLocationManager.authorizationStatus() == CLAuthorizationStatus.authorizedWhenInUse
+                || CLLocationManager.authorizationStatus() == CLAuthorizationStatus.authorizedAlways
+            )
+            {
+                guard let currentLocation = locManager.location else {
+                    print("Error: ARView:getNearbyEvents - Unable to acquire user's location!")
+                    return
                 }
+            let lat =  String(currentLocation.coordinate.latitude)
+            let lon =  String(currentLocation.coordinate.longitude)
+            // get event's full info
+            let getURL = "https://54.175.206.175/events/" + eventID + "?lat=" + lat + "&lon=" + lon
+                print(getURL)
+            AF.request(getURL, method: .get).response { res in
+                //let resData = String(data: res.data!, encoding: String.Encoding.utf8)!
+                if let json = try? JSON(data: res.data!) {
+                    let eventEntry = json["event"].arrayValue
+                    // set global event to the one just tapped
+                    print(eventEntry)
+                    GLOBAL_CURRENT_EVENT = Event(
+                        event_id: eventEntry[0].stringValue,
+                        title: eventEntry[1].stringValue,
+                        address: eventEntry[2].stringValue,
+                        latitude: "\(eventEntry[3].stringValue)",
+                        longitude: "\(eventEntry[4].stringValue)",
+                        start_time: eventEntry[5].stringValue,
+                        end_time:  eventEntry[6].stringValue,
+                        description: eventEntry[7].stringValue,
+                        distance: eventEntry[9].stringValue
+                    )
 
-                self.present(navController, animated: true, completion: nil)
+                    // now, launch the event info modal, filled with info about the global event
+                    let storyboard = UIStoryboard(name: "EventInfoView", bundle: nil)
+                    let vc = storyboard.instantiateViewController(withIdentifier: "EventInfoViewStoryboardID") as! EventInfoView
+
+                    let navController = UINavigationController(rootViewController: vc)
+
+                    // make modal half screen, comment this if statement out for full screen
+                    // https://stackoverflow.com/a/67988976
+                    if let pc =
+                        navController.presentationController
+                            as? UISheetPresentationController {
+
+                        pc.detents = [.medium()]
+                    }
+
+                    self.present(navController, animated: true, completion: nil)
+                }
             }
         }
+        }
     }
-
-}
 
 
 
@@ -279,20 +297,20 @@ extension UIView {
     class func prettyLabeledView(text: String,
                                  backgroundColor: UIColor = .systemBackground,
                                  borderColor: UIColor = .black,
-                                // adding this in myself
+                                 // adding this in myself
                                  textColor: UIColor = .white,
                                  eventID: String
-                                    ) -> UIView {
+    ) -> UIView {
         let font = UIFont.preferredFont(forTextStyle: .title2)
         let fontAttributes = [NSAttributedString.Key.font: font]
         let size = (text as NSString).size(withAttributes: fontAttributes)
         let label = UILabel(frame: CGRect(x: 0, y: 0, width: size.width, height: size.height))
-
+        
         let attributedString = NSAttributedString(string: text, attributes: [NSAttributedString.Key.font: font])
         label.attributedText = attributedString
         label.textAlignment = .center
         label.adjustsFontForContentSizeCategory = true
-
+        
         let cframe = CGRect(x: 0, y: 0, width: label.frame.width + 20, height: label.frame.height + 10)
         let cview = UIView(frame: cframe)
         cview.translatesAutoresizingMaskIntoConstraints = false
