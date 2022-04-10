@@ -20,7 +20,6 @@
 		8A4C804727F270CE00E614BF /* DeleteEventView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A4C804627F270CE00E614BF /* DeleteEventView.swift */; };
 		8A73F14127F5392D00915F9F /* EditEventView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A73F14027F5392D00915F9F /* EditEventView.swift */; };
 		8A73F14327F54A3400915F9F /* extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A73F14227F54A3400915F9F /* extensions.swift */; };
-		C980BAC527FAD24A0020D518 /* SearchBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C980BAC427FAD24A0020D518 /* SearchBarView.swift */; };
 		C980BAC927FAEE340020D518 /* MapView3.swift in Sources */ = {isa = PBXBuildFile; fileRef = C980BAC827FAEE340020D518 /* MapView3.swift */; };
 		C980BACB27FAEED80020D518 /* MapViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C980BACA27FAEED80020D518 /* MapViewModel.swift */; };
 		C980BACD27FAEF740020D518 /* MapHomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C980BACC27FAEF740020D518 /* MapHomeView.swift */; };
@@ -50,7 +49,6 @@
 		8A73F14027F5392D00915F9F /* EditEventView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditEventView.swift; sourceTree = "<group>"; };
 		8A73F14227F54A3400915F9F /* extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = extensions.swift; sourceTree = "<group>"; };
 		AA9B5103267BBE2B9EF6BB44 /* Pods_Tempo.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Tempo.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		C980BAC427FAD24A0020D518 /* SearchBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchBarView.swift; sourceTree = "<group>"; };
 		C980BAC827FAEE340020D518 /* MapView3.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapView3.swift; sourceTree = "<group>"; };
 		C980BACA27FAEED80020D518 /* MapViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapViewModel.swift; sourceTree = "<group>"; };
 		C980BACC27FAEF740020D518 /* MapHomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapHomeView.swift; sourceTree = "<group>"; };
@@ -132,7 +130,6 @@
 				C980BAC827FAEE340020D518 /* MapView3.swift */,
 				C980BACA27FAEED80020D518 /* MapViewModel.swift */,
 				C980BACC27FAEF740020D518 /* MapHomeView.swift */,
-				C980BAC427FAD24A0020D518 /* SearchBarView.swift */,
 				C9F687C127FAF3F8007A05C0 /* ContentView.swift */,
 				7657E89227E3C827001A785F /* MapView2.swift */,
 				7657E88C27E2DA95001A785F /* CreateEventsButton.swift */,
@@ -289,7 +286,6 @@
 				8A73F14127F5392D00915F9F /* EditEventView.swift in Sources */,
 				4428AF3D27E22EDB00248B2E /* EventStore.swift in Sources */,
 				EB6ECB2927E01CBD0040C0E2 /* ARView.swift in Sources */,
-				C980BAC527FAD24A0020D518 /* SearchBarView.swift in Sources */,
 				EB6ECB1527E019550040C0E2 /* AppDelegate.swift in Sources */,
 				C980BACB27FAEED80020D518 /* MapViewModel.swift in Sources */,
 				7657E89327E3C827001A785F /* MapView2.swift in Sources */,
@@ -436,7 +432,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = R6WGMNBNXH;
+				DEVELOPMENT_TEAM = 28TK5NAHQX;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Tempo/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "";
@@ -451,7 +447,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = edu.umich.hmsalame.Tempo;
+				PRODUCT_BUNDLE_IDENTIFIER = edu.umich.cnwentla.Tempo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -467,7 +463,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = R6WGMNBNXH;
+				DEVELOPMENT_TEAM = 28TK5NAHQX;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Tempo/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "";
@@ -482,7 +478,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = edu.umich.hmsalame.Tempo;
+				PRODUCT_BUNDLE_IDENTIFIER = edu.umich.cnwentla.Tempo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;

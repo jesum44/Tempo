@@ -43,8 +43,8 @@ class MapViewModel: UIViewController, ObservableObject, CLLocationManagerDelegat
     // Searchable Places
     @Published var events : [Event] = []
     
-    @Published var selectedEvent: Event?
-        
+    @Published var filteredEvents : [Event] = []
+            
     private var cancellables = Set<AnyCancellable>()
     
     
@@ -64,6 +64,39 @@ class MapViewModel: UIViewController, ObservableObject, CLLocationManagerDelegat
         
         mapView.setRegion(region, animated: true)
         mapView.setVisibleMapRect(mapView.visibleMapRect, animated: true)
+    }
+    
+    func handleEventTapped(event: Event) {
+        // Center on selected event's coordinates
+        let event_coordinate = CLLocationCoordinate2D(latitude: Double(event.latitude!)!, longitude: Double(event.longitude!)!)
+        
+        let region = MKCoordinateRegion(center: event_coordinate, latitudinalMeters: 10000, longitudinalMeters: 10000)
+        
+        self.mapView.setRegion(region, animated: true)
+        
+        self.mapView.setVisibleMapRect(self.mapView.visibleMapRect, animated: true)
+        
+        // Open event's details
+        GLOBAL_CURRENT_EVENT = Event(
+            event_id: event.event_id,
+            title: event.title,
+            address: event.address,
+            latitude: event.latitude,
+            longitude: event.longitude,
+            start_time: event.start_time,
+            end_time: event.end_time,
+            description: event.description
+        )
+        
+        let topVC = self.topMostController()
+        
+        let uiStoryboard = UIStoryboard(name: "EventInfoView", bundle: nil)
+        
+        let vcToPresent = uiStoryboard.instantiateViewController(withIdentifier: "EventInfoViewStoryboardID") as! EventInfoView
+
+        topVC.present(vcToPresent, animated:true, completion: nil)
+
+        
     }
     
     func updateNearbyEvents() {
@@ -86,7 +119,7 @@ class MapViewModel: UIViewController, ObservableObject, CLLocationManagerDelegat
         var customAnnotations = self.mapView.annotations.filter({!($0 is MKUserLocation)}) as! [MyAnnotation]
         
         for annotation in customAnnotations {
-            if !self.events.contains(where: { $0.event_id == annotation.event_id }) {
+            if !self.filteredEvents.contains(where: { $0.event_id == annotation.event_id }) {
                 mapView.removeAnnotation(annotation)
             }
         }
@@ -94,7 +127,7 @@ class MapViewModel: UIViewController, ObservableObject, CLLocationManagerDelegat
         // add events to map that are in self.events and not already on the map
         customAnnotations = self.mapView.annotations.filter({!($0 is MKUserLocation)}) as! [MyAnnotation]
         
-        for event in self.events {
+        for event in self.filteredEvents {
             if !customAnnotations.contains(where: { $0.event_id == event.event_id }) {
                 
                 let lat = Double( event.latitude! )!
@@ -127,7 +160,7 @@ class MapViewModel: UIViewController, ObservableObject, CLLocationManagerDelegat
                 
             }
             .sink { [weak self] (returnedEvents) in
-                self?.events = returnedEvents
+                self?.filteredEvents = returnedEvents
                 self?.updateMap()
             }
             .store(in: &cancellables)
@@ -162,22 +195,6 @@ class MapViewModel: UIViewController, ObservableObject, CLLocationManagerDelegat
         vcToPresent.modalPresentationStyle = .fullScreen
         topVC.present(vcToPresent, animated: true, completion: nil)
 
-    }
-    
-    func searchQuery() {
-        let locManager = CLLocationManager()
-        
-        guard let currentLocation = locManager.location else {
-            print("Error: ARView:getNearbyEvents - Unable to acquire user's location!")
-            return
-        }
-        
-        EventStore.shared.getEvents(
-            lat: currentLocation.coordinate.latitude,
-            lon: currentLocation.coordinate.longitude
-        ) { }
-        
-        self.events = EventStore.shared.events
     }
     
     func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {

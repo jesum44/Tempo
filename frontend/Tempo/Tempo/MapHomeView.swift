@@ -15,8 +15,8 @@ struct MapHomeView: View {
     let timer = Timer.publish(every: 1, tolerance: 0.5, on: .main, in: .common).autoconnect()
     @StateObject var mapData = MapViewModel()
     @State var locationManager = CLLocationManager()
-    @State var predictableValues: Array<String> =  EventStore.shared.events.compactMap{$0.title}
-    @State var predictedValue: Array<String> = []
+//    @State var predictableValues: Array<String> =  EventStore.shared.events.compactMap{$0.title}
+//    @State var predictedValue: Array<String> = []
     
     var body: some View {
         
@@ -28,20 +28,62 @@ struct MapHomeView: View {
                 
                 VStack(spacing: 0) {
                     
-                    PredictingTextField(predictableValues: self.$predictableValues, predictedValues: self.$predictedValue, textFieldInput: self.$mapData.searchText)
-                        .cornerRadius(0.75)
+                    HStack {
+                        Image(systemName: "magnifyingglass")
+                            .foregroundColor(self.mapData.searchText.isEmpty ? .gray : .black)
+                            .opacity(self.mapData.searchText.isEmpty ? 0.75 : 1.0)
+                        
+                        TextField("Search for nearby events...", text: self.$mapData.searchText)
+                            .disableAutocorrection(true)
+                            .keyboardType(.alphabet)
+                            .colorScheme(.light)
+                            .overlay(
+                                Image(systemName: "xmark.circle.fill")
+                                    .padding()
+                                    .foregroundColor(.gray)
+                                    .offset(x: 10)
+                                    .opacity(self.mapData.searchText.isEmpty ? 0.0 : 1.0)
+                                    .onTapGesture {
+                                        self.mapData.searchText = ""
+            //                                        mapData.addSubscribers()
+                                        // Possibly call get events again here
+                                    }
+                                ,alignment: .trailing
+                            )
+                    }
+                    .padding(.vertical, 10)
+                    .padding(.horizontal)
+                    .background(.white)
+                    .opacity(self.mapData.searchText.isEmpty ? 0.75 : 1.0)
+                    .cornerRadius(0.10)
                     
                     if !mapData.searchText.isEmpty {
                         ScrollView {
-                            ForEach(self.predictedValue, id: \.self) { value in
-                                Text("\(value)")
-                                    .foregroundColor(.black)
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                                    .padding(.vertical, 10)
-                                    .padding(.horizontal)
-                                    .onTapGesture {
-                                        ///Show location on map
+                            ForEach(self.mapData.filteredEvents, id: \.event_id) { event in
+//                                var title = event.title ?? ""
+////                                let description = event.description ?? ""
+//                                title = title.replacingOccurrences(of: self.mapData.searchText, with: "**\(self.mapData.searchText)**")
+                                HStack {
+                                    VStack {
+                                        Text("\(event.title!.withBoldText(text: self.mapData.searchText))")
+                                            .foregroundColor(.black)
+                                            .frame(maxWidth: .infinity, alignment: .leading)
+                                            
+                                            .padding(.horizontal)
+                                            
+                                        Text("\(event.description!.withBoldText(text: self.mapData.searchText))")
+                                            .foregroundColor(.black)
+                                            .frame(maxWidth: .infinity, alignment: .leading)
+                                            .padding(.horizontal)
                                     }
+                                }
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .padding(.vertical, 10)
+                                .onTapGesture {
+                                    // Show location on map
+                                    self.mapData.handleEventTapped(event: event)
+                                }
+                                
                                 
                                 Divider()
                             }
@@ -181,6 +223,18 @@ struct MapHomeView: View {
     }
 }
 
+
+extension String {
+    func withBoldText(text: String, font: UIFont? = nil) -> NSAttributedString {
+        let _font = font ?? UIFont.systemFont(ofSize: 14, weight: .regular)
+        let fullString = NSMutableAttributedString(string: self, attributes: [NSAttributedString.Key.font: _font])
+        let boldFontAttribute: [NSAttributedString.Key: Any] = [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: _font.pointSize)]
+        let range = (self as NSString).range(of: text)
+        fullString.addAttributes(boldFontAttribute, range: range)
+        return fullString
+    }
+    
+}
 
 struct PredictingTextField: View {
     

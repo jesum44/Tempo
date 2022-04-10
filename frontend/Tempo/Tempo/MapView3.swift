@@ -77,18 +77,6 @@ struct MapView3: UIViewRepresentable {
 
                     topVC.present(vcToPresent, animated:true, completion: nil)
                     
-//                    let nc = UINavigationController(rootViewController: vc)
-//
-//                    if let pc = nc.presentationController as? UISheetPresentationController {
-//                        pc.detents = [.medium()]
-//                    }
-                        
-                    
-//                    self.dismiss(animated: true, completion: nil)
-//                    
-//                    self.present(nc, animated: true, completion: nil)
-//                    
-//                    navigationContoller.viewControllers.last?.present(vc, animated: true)
                 }
             }
         }
