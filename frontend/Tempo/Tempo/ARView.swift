@@ -60,30 +60,27 @@ class ARView: UIViewController, CLLocationManagerDelegate {
         UIApplication.shared.keyWindow?.rootViewController?.present(SignInView(), animated: true, completion: nil)
     }
     func addButtons() {
-        self.authenticate()
         //******** CreateEvent Code Below:
         // add "+" button to create an event
-        let buttonFactory = CreateEventsButton()
         let frame = self.view.safeAreaLayoutGuide
-        
-        let button = buttonFactory.createButton(frame:frame)
-        
-        button.addTarget(self, action: #selector(createEventButtonTapped), for: .touchUpInside)
-        
-        let toggleFactory = createToggle()
-        let toggleContainer = toggleFactory.createButtonContainer(screenHeight: screenHeight)
-        let mapButton = toggleFactory.createMapButton(screenHeight: screenHeight)
-        let ARButton = toggleFactory.createARButton(screenHeight: screenHeight)
+//
+//        let button = buttonFactory.createButton(frame:frame)
+//
+//        button.addTarget(self, action: #selector(createEventButtonTapped), for: .touchUpInside)
+//
+        let toggleFactory = createToggle(frame:frame)
+        let toggleContainer = toggleFactory.createButtonContainer()
+        let mapButton = toggleFactory.createMapButton()
+        let eventButton = toggleFactory.createEventButton()
         mapButton.isEnabled = true
-        ARButton.isEnabled = false
-        mapButton.addTarget(self, action:#selector(toggleMap), for: .touchUpInside)
+        mapButton.addTarget(self, action: #selector(toggleMap), for: .touchUpInside)
+        eventButton.addTarget(self, action: #selector(createEventButtonTapped), for: .touchUpInside)
         
         // add + button to view
-        self.view.addSubview(button)
+//        self.view.addSubview(button)
         self.view.addSubview(toggleContainer)
-        
+        toggleContainer.addArrangedSubview(eventButton)
         toggleContainer.addArrangedSubview(mapButton)
-        toggleContainer.addArrangedSubview(ARButton)
     }
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
@@ -107,8 +104,8 @@ class ARView: UIViewController, CLLocationManagerDelegate {
     @objc func toggleMap(sender: UIButton!){
         sender.isEnabled = false
         
-        let mapView = MapView()
-        let vc = UINavigationController(rootViewController: mapView)
+        let mapView = MapHomeView()
+        let vc = UIHostingController(rootView: mapView)
         vc.modalPresentationStyle = .fullScreen
         show(vc, sender:self)
     }
