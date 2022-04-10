@@ -27,6 +27,7 @@
 		EB6ECB1E27E019580040C0E2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EB6ECB1D27E019580040C0E2 /* Assets.xcassets */; };
 		EB6ECB2127E019580040C0E2 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EB6ECB1F27E019580040C0E2 /* LaunchScreen.storyboard */; };
 		EB6ECB2927E01CBD0040C0E2 /* ARView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB6ECB2827E01CBD0040C0E2 /* ARView.swift */; };
+		EBEFD8652803582C003CBD5C /* UserID.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBEFD8642803582C003CBD5C /* UserID.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -54,6 +55,7 @@
 		EB6ECB2027E019580040C0E2 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		EB6ECB2227E019580040C0E2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		EB6ECB2827E01CBD0040C0E2 /* ARView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARView.swift; sourceTree = "<group>"; };
+		EBEFD8642803582C003CBD5C /* UserID.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserID.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -126,6 +128,7 @@
 				7657E88E27E3C4D3001A785F /* createToggle.swift */,
 				8A73F14227F54A3400915F9F /* extensions.swift */,
 				8A82CAF627FFBD8400CD6432 /* SignInView.swift */,
+				EBEFD8642803582C003CBD5C /* UserID.swift */,
 			);
 			path = Tempo;
 			sourceTree = "<group>";
@@ -267,6 +270,7 @@
 				7657E88D27E2DA95001A785F /* CreateEventsButton.swift in Sources */,
 				7657E88927E2D73D001A785F /* MapView.swift in Sources */,
 				7657E88F27E3C4D3001A785F /* createToggle.swift in Sources */,
+				EBEFD8652803582C003CBD5C /* UserID.swift in Sources */,
 				8A73F14327F54A3400915F9F /* extensions.swift in Sources */,
 				EB6ECB1927E019550040C0E2 /* ViewController.swift in Sources */,
 				8A4C804727F270CE00E614BF /* DeleteEventView.swift in Sources */,
