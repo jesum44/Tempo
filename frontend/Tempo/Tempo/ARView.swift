@@ -106,9 +106,9 @@ class ARView: UIViewController, CLLocationManagerDelegate {
     
     @objc func toggleMap(sender: UIButton!){
         sender.isEnabled = false
-        
-        let mapView = MapView()
-        let vc = UINavigationController(rootViewController: mapView)
+                
+        let mapView = MapHomeView()
+        let vc = UIHostingController(rootView: mapView)
         vc.modalPresentationStyle = .fullScreen
         show(vc, sender:self)
     }
