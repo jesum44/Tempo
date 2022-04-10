@@ -85,7 +85,8 @@ class MapViewModel: UIViewController, ObservableObject, CLLocationManagerDelegat
             longitude: event.longitude,
             start_time: event.start_time,
             end_time: event.end_time,
-            description: event.description
+            description: event.description,
+            distance: event.distance
         )
         
         let topVC = self.topMostController()

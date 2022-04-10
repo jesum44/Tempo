@@ -64,7 +64,8 @@ struct MapView3: UIViewRepresentable {
                         longitude: "\(event[4].stringValue)",
                         start_time: event[5].stringValue,
                         end_time:  event[6].stringValue,
-                        description: event[7].stringValue
+                        description: event[7].stringValue,
+                        distance: event[8].stringValue
                     )
                 
                 
