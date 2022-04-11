@@ -68,6 +68,10 @@ struct AuthView: View {
     
     @State var username = ""
     @State var password = ""
+    @State var email = ""
+    
+    @State var usersignin = ""
+    @State var passsignin = ""
     
     var body: some View {
         NavigationView {
@@ -75,21 +79,44 @@ struct AuthView: View {
                 Section(header: Text ("Sign Up")) {
                     TextField("Username", text: $username)
                     TextField("Password", text: $password)
-                }
-                .font(.title3)
-                .foregroundColor(.blue)
-                Section {
-                    HStack {
-                        Spacer()
-                        Button("Already have an account? Log in") {
-                            Task {
-                                
-                              
+                    TextField("Email", text: $email)
+                    Button("Sign Up") {
+                        Task {
+                            let success = await register(username: username, password: password, email: email)
+                            
+                            guard success else {
+                                return
                             }
+                            
+                            self.delegate.dismiss()
+                            
+                            
+                            
+//                            EventStore.shared.register(username: username, password: password, email: email, action: { self.delegate.dismiss() })
                         }
-                        .font(.title3)
-                        Spacer()
                     }
+                }
+//                .font(.title3)
+//                .foregroundColor(.blue)
+                Section(header: Text("Sign In")) {
+//                    HStack {
+//                    Spacer()
+                    TextField("Username", text: $usersignin)
+                    TextField("Password", text: $passsignin)
+                    Button("Already have an account? Log in") {
+                        Task {
+                            let success = await login(username: usersignin, password: passsignin)
+                            
+                            guard success else {
+                                return
+                            }
+                            
+                            self.delegate.dismiss()
+                        }
+                    }
+                    .font(.title3)
+//                    Spacer()
+//                    }
                 }
                 
                 Section {
@@ -124,35 +151,85 @@ struct AuthView: View {
 // Make sure parameters does not have Any in the type declaration or else
 //      it can't be json-encoded
 // return array of strings to allow basic error handling -> empty means no error
-//func makeCreateEventPostRequest(_ parameters: [String: String]) async -> [String] {
-//    // TODO: replace this with what the backend team provides
-//    //let url = "https://ptsv2.com/t/13soj-1647428183/post"
-//    let url = "https://54.175.206.175/events/"
-//
-//    guard let encoded = try? JSONEncoder().encode(parameters) else {
-//        print("JSONEncoder error")
-//        return ["Json Encoding"]
-//    }
-//
-//    var request = URLRequest(url: URL(string: url)!)
-//    request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-//    request.httpMethod = "POST"
-//
-//    do {
-//        let (data, res) = try await URLSession.shared.upload(for: request, from: encoded)
-//        let httpRes = res as! HTTPURLResponse
-//        if httpRes.statusCode != 201 {
-//            print("POST request status code was not 201! It was \(httpRes.statusCode)")
-//            return ["Status Code", "\(httpRes.statusCode)"]
-//        }
-//    } catch {
-//        print("POST Request error")
-//        return ["Post Request"]
-//    }
-//
-//    // no errors, everything worked, return [false]
-//    return []
-//}
+func register(username: String, password: String, email: String) async -> Bool {
+    // TODO: replace this with what the backend team provides
+    //let url = "https://ptsv2.com/t/13soj-1647428183/post"
+    let jsonObj = [
+        "username": username,
+        "password": password,
+        "email": email
+    ]
+    
+    guard let jsonData = try? JSONSerialization.data(withJSONObject: jsonObj) else {
+        print("postEvent: jsonData serialization error")
+        return false
+    }
+            
+    guard let apiUrl = URL(string: "https://54.175.206.175/accounts/register/") else {
+        print("register: Bad URL")
+        return false
+    }
+    
+    var request = URLRequest(url: apiUrl)
+    request.httpMethod = "POST"
+    request.httpBody = jsonData
+
+    do {
+        let (data, res) = try await URLSession.shared.data(for: request)
+        let httpRes = res as! HTTPURLResponse
+        if httpRes.statusCode != 201 {
+            print("POST request status code was not 201! It was \(httpRes.statusCode)")
+            return false
+        }
+        
+    } catch {
+        print("POST Request error")
+        return false
+    }
+
+    // no errors, everything worked, return true
+    return true
+}
+
+
+func login(username: String, password: String) async -> Bool {
+    // TODO: replace this with what the backend team provides
+    //let url = "https://ptsv2.com/t/13soj-1647428183/post"
+    let jsonObj = [
+        "username": username,
+        "password": password
+    ]
+    
+    guard let jsonData = try? JSONSerialization.data(withJSONObject: jsonObj) else {
+        print("postEvent: jsonData serialization error")
+        return false
+    }
+            
+    guard let apiUrl = URL(string: "https://54.175.206.175/accounts/login/") else {
+        print("register: Bad URL")
+        return false
+    }
+    
+    var request = URLRequest(url: apiUrl)
+    request.httpMethod = "POST"
+    request.httpBody = jsonData
+
+    do {
+        let (data, res) = try await URLSession.shared.data(for: request)
+        let httpRes = res as! HTTPURLResponse
+        if httpRes.statusCode != 200 {
+            print("POST request status code was not 200! It was \(httpRes.statusCode)")
+            return false
+        }
+        
+    } catch {
+        print("POST Request error")
+        return false
+    }
+
+    // no errors, everything worked, return true
+    return true
+}
 
 
 
