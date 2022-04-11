@@ -14,12 +14,12 @@ import CoreLocation
 import SwiftyJSON
 
 class MyAnnotation: NSObject, MKAnnotation {
-    var event_id: String?
+    var event: Event?
     var coordinate: CLLocationCoordinate2D
     let title: String?
     
-    init(event_id: String, coordinate: CLLocationCoordinate2D, title: String) {
-        self.event_id = event_id
+    init(event: Event, coordinate: CLLocationCoordinate2D, title: String) {
+        self.event = event
         self.coordinate = coordinate
         self.title = title
     }
@@ -68,6 +68,7 @@ class MapViewModel: UIViewController, ObservableObject, CLLocationManagerDelegat
     
     func handleEventTapped(event: Event) {
         // Center on selected event's coordinates
+        print("!!!!!!!!!!!!!! EVENT TAPPED!!!!!!!!!!!!!!")
         let event_coordinate = CLLocationCoordinate2D(latitude: Double(event.latitude!)!, longitude: Double(event.longitude!)!)
         
         let region = MKCoordinateRegion(center: event_coordinate, latitudinalMeters: 10000, longitudinalMeters: 10000)
@@ -94,8 +95,17 @@ class MapViewModel: UIViewController, ObservableObject, CLLocationManagerDelegat
         let uiStoryboard = UIStoryboard(name: "EventInfoView", bundle: nil)
         
         let vcToPresent = uiStoryboard.instantiateViewController(withIdentifier: "EventInfoViewStoryboardID") as! EventInfoView
+        
+        let navController = UINavigationController(rootViewController: vcToPresent)
+        
+        if let pc =
+            navController.presentationController
+            as? UISheetPresentationController {
+            
+            pc.detents = [.medium()]
+        }
 
-        topVC.present(vcToPresent, animated:true, completion: nil)
+        topVC.present(navController, animated:true, completion: nil)
 
         
     }
@@ -120,7 +130,7 @@ class MapViewModel: UIViewController, ObservableObject, CLLocationManagerDelegat
         var customAnnotations = self.mapView.annotations.filter({!($0 is MKUserLocation)}) as! [MyAnnotation]
         
         for annotation in customAnnotations {
-            if !self.filteredEvents.contains(where: { $0.event_id == annotation.event_id }) {
+            if !self.filteredEvents.contains(where: { $0.event_id == annotation.event?.event_id }) {
                 mapView.removeAnnotation(annotation)
             }
         }
@@ -129,13 +139,13 @@ class MapViewModel: UIViewController, ObservableObject, CLLocationManagerDelegat
         customAnnotations = self.mapView.annotations.filter({!($0 is MKUserLocation)}) as! [MyAnnotation]
         
         for event in self.filteredEvents {
-            if !customAnnotations.contains(where: { $0.event_id == event.event_id }) {
+            if !customAnnotations.contains(where: { $0.event?.event_id == event.event_id }) {
                 
                 let lat = Double( event.latitude! )!
                 let lon = Double( event.longitude! )!
                 
                 let coordinate = CLLocationCoordinate2D(latitude: lat, longitude: lon)
-                let pointAnnotation = MyAnnotation(event_id: event.event_id ?? "", coordinate: coordinate, title: event.title ?? "")
+                let pointAnnotation = MyAnnotation(event: event, coordinate: coordinate, title: event.title ?? "")
                 
                 mapView.addAnnotation(pointAnnotation)
             }
@@ -251,52 +261,52 @@ class MapViewModel: UIViewController, ObservableObject, CLLocationManagerDelegat
         self.lon = location.coordinate.longitude
     }
     
-    func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
-                print("here")
-                guard let annotation = view.annotation as? MyAnnotation else { return }
-    
-    
-                let getURL = "https://54.175.206.175/events/" + annotation.event_id!
-    
-                AF.request(getURL, method: .get).response { res in
-                    if let json = try? JSON(data: res.data!) {
-                        let event = json["event"].arrayValue
-                        GLOBAL_CURRENT_EVENT = Event(
-                            event_id: event[0].stringValue,
-                            title: event[1].stringValue,
-                            address: event[2].stringValue,
-                            latitude: "\(event[3].stringValue)",
-                            longitude: "\(event[4].stringValue)",
-                            start_time: event[5].stringValue,
-                            end_time:  event[6].stringValue,
-                            description: event[7].stringValue
-                        )
-    
-    
-    
-    
-    
-    
-                        let uiStoryboard = UIStoryboard(name: "EventInfoView", bundle: nil)
-    
-                        guard let vc = uiStoryboard.instantiateViewController(withIdentifier: "EventInfoViewStoryboardID") as? EventInfoView else {return}
-    
-                        let nc = UINavigationController(rootViewController: vc)
-    
-                        if let pc = nc.presentationController as? UISheetPresentationController {
-                            pc.detents = [.medium()]
-                        }
-    
-    
-//                        self.dismiss(animated: true, completion: nil)
-    
-                        self.present(nc, animated: true, completion: nil)
-    
-//                        navigationContoller.viewControllers.last?.present(vc, animated: true)
-                    }
-                }
-            
-        }
+//    func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
+//                print("here as in there?")
+//                guard let annotation = view.annotation as? MyAnnotation else { return }
+//
+//
+//                let getURL = "https://54.175.206.175/events/" + annotation.event_id!
+//
+//                AF.request(getURL, method: .get).response { res in
+//                    if let json = try? JSON(data: res.data!) {
+//                        let event = json["event"].arrayValue
+//                        GLOBAL_CURRENT_EVENT = Event(
+//                            event_id: event[0].stringValue,
+//                            title: event[1].stringValue,
+//                            address: event[2].stringValue,
+//                            latitude: "\(event[3].stringValue)",
+//                            longitude: "\(event[4].stringValue)",
+//                            start_time: event[5].stringValue,
+//                            end_time:  event[6].stringValue,
+//                            description: event[7].stringValue
+//                        )
+//
+//
+//
+//
+//
+//
+//                        let uiStoryboard = UIStoryboard(name: "EventInfoView", bundle: nil)
+//
+//                        guard let vc = uiStoryboard.instantiateViewController(withIdentifier: "EventInfoViewStoryboardID") as? EventInfoView else {return}
+//
+//                        let nc = UINavigationController(rootViewController: vc)
+//
+//                        if let pc = nc.presentationController as? UISheetPresentationController {
+//                            pc.detents = [.medium()]
+//                        }
+//
+//
+////                        self.dismiss(animated: true, completion: nil)
+//
+//                        self.present(nc, animated: true, completion: nil)
+//
+////                        navigationContoller.viewControllers.last?.present(vc, animated: true)
+//                    }
+//                }
+//
+//        }
     
   
     

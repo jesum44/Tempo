@@ -129,7 +129,7 @@ struct MapHomeView: View {
                             .font(.system(size: 10))
                             
                             // Center on Location
-                            Button(action: {}, label: {
+                            Button(action: mapData.focusLocation, label: {
                                 Image(systemName: "location.fill")
                                     .font(.title)
                                     .padding(10)
@@ -180,7 +180,7 @@ struct MapHomeView: View {
                             .font(.system(size: 10))
                             
                             // Center on Location
-                            Button(action: {}, label: {
+                            Button(action: mapData.focusLocation, label: {
                                 Image(systemName: "location.fill")
                                     .font(.title)
                                     .padding(10)
@@ -347,8 +347,8 @@ struct PredictingTextField: View {
                   
 
 
-struct MapHomeView_Previews: PreviewProvider {
-    static var previews: some View {
-        MapHomeView()
-    }
-}
+//struct MapHomeView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        MapHomeView()
+//    }
+//}
