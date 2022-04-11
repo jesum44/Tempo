@@ -176,16 +176,36 @@ class MapViewModel: UIViewController, ObservableObject, CLLocationManagerDelegat
         return topController
         
     }
+    
+    func getTopMostViewController() -> UIViewController? {
+        var topMostViewController = UIApplication.shared.keyWindow?.rootViewController
 
+        while let presentedViewController = topMostViewController?.presentedViewController {
+            topMostViewController = presentedViewController
+        }
+
+        return topMostViewController
+    }
+
+    func show_signIn() {
+        DispatchQueue.main.async {
+            self.getTopMostViewController()?.present(SignInView(), animated: true, completion: nil)
+        }
+    }
     
     @objc func postEvent() {
-        let topVC = topMostController()
-        
-        let uiStoryboard = UIStoryboard(name: "CreateEvent", bundle: nil)
-        
-        let vcToPresent = uiStoryboard.instantiateViewController(withIdentifier: "CreateEventStoryboardID") as! CreateEventView
-        
-        topVC.present(vcToPresent, animated: true, completion: nil)
+        if (!EventStore.shared.authenticated) {
+            self.show_signIn()
+        }
+        else {
+            let topVC = topMostController()
+            
+            let uiStoryboard = UIStoryboard(name: "CreateEvent", bundle: nil)
+            
+            let vcToPresent = uiStoryboard.instantiateViewController(withIdentifier: "CreateEventStoryboardID") as! CreateEventView
+            
+            topVC.present(vcToPresent, animated: true, completion: nil)
+        }
     }
     
     @objc func toggleAR() {
