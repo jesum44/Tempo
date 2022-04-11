@@ -58,11 +58,20 @@ def register(request):
         return HttpResponse(status=201)
 
 @csrf_exempt
+def check_auth(request):
+    if request.method == 'GET':
+        logged_in = False
+        if request.user.is_authenticated:
+            logged_in = True
+        return JsonResponse({'logged_in': logged_in})
+    return HttpResponse(status=404)
+
+@csrf_exempt
 def events_detail(request, slug):
     if request.method == 'GET':
         cursor = connection.cursor()
         cursor.execute(
-            '''SELECT event_id, title, address, lat, lon, start_time, end_time, description, categories FROM events WHERE event_id = %s;''', [slug]
+            '''SELECT event_id, title, address, lat, lon, start_time, end_time, description, categories, user_id FROM events WHERE event_id = %s;''', [slug]
         )
 
         events = cursor.fetchall()
@@ -70,6 +79,12 @@ def events_detail(request, slug):
             return HttpResponse(status=404)
 
         event_data = list(events[0])
+        is_owner = False
+        if request.user.is_authenticated:
+            created_by = event_data[9]
+            if created_by == request.user.username:
+                is_owner = True
+
 
         if not event_data[8]:
             event_data[8] = ''
@@ -108,7 +123,7 @@ def events_detail(request, slug):
         dist = c * r
         event_data.append(round(dist, 1))
 
-        return JsonResponse({'event': event_data})
+        return JsonResponse({'event': event_data, 'is_owner': is_owner})
 
     elif request.method == 'PUT':
         if not request.user.is_authenticated:
@@ -149,6 +164,9 @@ def events_detail(request, slug):
         return HttpResponse(status=201)
 
     elif request.method == 'DELETE':
+        if not request.user.is_authenticated:
+            return HttpResponse(status=401)
+
         cursor = connection.cursor()
         cursor.execute(
             '''SELECT event_id FROM events WHERE event_id = %s;''', [slug]
@@ -172,11 +190,14 @@ def events_detail(request, slug):
 @csrf_exempt
 def events(request):
     if request.method == 'POST':
-        json_data = json.loads(request.body)
+        if not request.user.is_authenticated:
+            return HttpResponse(status=401)
 
+        json_data = json.loads(request.body)
+        
+        user_id = request.user.username
         event_id = str(uuid.uuid4().int)
 
-        user_id = json_data['user_id']
         title = json_data['title']
         description = json_data['description']
         address = json_data['address']
