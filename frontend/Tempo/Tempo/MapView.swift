@@ -94,20 +94,27 @@ final class MapView:UIViewController, CLLocationManagerDelegate, GMSMapViewDeleg
         show(vc, sender:self)
     }
     
+    func show_signIn() {
+        DispatchQueue.main.async {
+            UIApplication.shared.keyWindow?.rootViewController?.present(SignInView(), animated: true, completion: nil)
+        }
+    }
+
+    
     @objc func createEventButtonTapped(sender: UIButton!){
-        // get CreateEvent.storyboard
-        let storyboard = UIStoryboard(name: "CreateEvent", bundle: nil)
-        // click on the storyboard file, click the correct view, and give it the same
-        // Storyboard ID as below
-        let vc = storyboard.instantiateViewController(
-            withIdentifier: "CreateEventStoryboardID") as! CreateEventView
-        let navController = UINavigationController(rootViewController: vc)
-        self.present(navController, animated: true, completion: nil)
-        
-        // this was the previous way I opened the CreateEventView
-        // this can be left blank for a swipe-closable modal
-        //vc.modalPresentationStyle = .fullScreen
-        //self.present(vc, animated: true, completion: nil)
+            // get CreateEvent.storyboard
+            let storyboard = UIStoryboard(name: "CreateEvent", bundle: nil)
+            // click on the storyboard file, click the correct view, and give it the same
+            // Storyboard ID as below
+            let vc = storyboard.instantiateViewController(
+                withIdentifier: "CreateEventStoryboardID") as! CreateEventView
+            let navController = UINavigationController(rootViewController: vc)
+            self.present(navController, animated: true, completion: nil)
+            
+            // this was the previous way I opened the CreateEventView
+            // this can be left blank for a swipe-closable modal
+            //vc.modalPresentationStyle = .fullScreen
+            //self.present(vc, animated: true, completion: nil)
     }
     
     func mapView(_ mapView: GMSMapView, didTap marker: GMSMarker) -> Bool {

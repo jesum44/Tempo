@@ -59,9 +59,19 @@ class ARView: UIViewController, CLLocationManagerDelegate {
         self.authenticate()
     }
     
+    func getTopMostViewController() -> UIViewController? {
+        var topMostViewController = UIApplication.shared.keyWindow?.rootViewController
+
+        while let presentedViewController = topMostViewController?.presentedViewController {
+            topMostViewController = presentedViewController
+        }
+
+        return topMostViewController
+    }
+    
     func show_signIn() {
         DispatchQueue.main.async {
-            UIApplication.shared.keyWindow?.rootViewController?.present(SignInView(), animated: true, completion: nil)
+            self.getTopMostViewController()?.present(SignInView(), animated: true, completion: nil)
         }
     }
     
