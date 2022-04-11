@@ -74,6 +74,7 @@ struct SwiftUIEventInfoView: View {
     @ObservedObject var delegate: SheetDismisserProtocol
     // the event that has been most recently tapped
     var event: Event = GLOBAL_CURRENT_EVENT
+    var is_owner : Bool = GLOBAL_IS_OWNER
     
     @State private var isShareViewPresented: Bool = false
     @State var toEditEvent: Int? = nil
@@ -120,6 +121,7 @@ struct SwiftUIEventInfoView: View {
                         }
                         Spacer()
                         // edit button
+                        if (GLOBAL_IS_OWNER) {
                         VStack(alignment: .trailing) {
                                 NavigationLink(destination: SwiftUIEditEventView(delegate: delegate), tag: 1, selection: $toEditEvent) {
                                     Button("Edit Event") {
@@ -127,6 +129,7 @@ struct SwiftUIEventInfoView: View {
                                     }
                                 }
                             .font(.title3)
+                        }
                         }
                         Spacer().frame(width: sideSpacerWidth)
                     }

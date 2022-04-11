@@ -13,6 +13,7 @@ final class EventStore {
     private init() {}                // and make the constructor private so no other
                                      // instances can be created
     var events = [Event]()
+    var authenticated = false
     private let nFields = Mirror(reflecting: Event()).children.count
 
     let serverUrl = "https://54.175.206.175/"
@@ -46,6 +47,36 @@ final class EventStore {
                     print("postChatt: HTTP STATUS: \(httpStatus.statusCode)")
                     return
                 }
+            }.resume()
+        }
+    
+    
+    func authenticate(onCompleted: @escaping () -> ()) {
+            guard let apiUrl = URLComponents(string: serverUrl+"accounts/status/") else {
+                print("auth: Bad URL")
+                return
+            }
+            
+            var request = URLRequest(url: apiUrl.url!)
+            request.httpMethod = "GET"
+            URLSession.shared.dataTask(with: request) { data, response, error in
+                
+                guard let data = data, error == nil else {
+                    print("auth: NETWORKING ERROR")
+                    return
+                }
+                if let httpStatus = response as? HTTPURLResponse, httpStatus.statusCode != 200 {
+                    print("auth: HTTP STATUS: \(httpStatus.statusCode)")
+                    return
+                }
+                
+                guard let jsonObj = try? JSONSerialization.jsonObject(with: data) as? [String:Any] else {
+                    print("auth: failed JSON deserialization")
+                    return
+                }
+                
+                self.authenticated = jsonObj["logged_in"] as? Bool ?? false
+                onCompleted()
             }.resume()
         }
     
@@ -100,3 +131,4 @@ final class EventStore {
             }.resume()
         }
 }
+

@@ -24,6 +24,8 @@ import Alamofire
 // change this value whenever an event is clicked so it can be used for the modal
 var GLOBAL_CURRENT_EVENT = Event(event_id: "123456abc", title: "Shrek's Grad Party", address: "987 Swamp Street Ann Arbor, MI", latitude: "42.2768206", longitude: "-83.729657", start_time: "1648408690", end_time: "1648408690", description: "Food & Drinks provided. Live music by Smash Mouth.", distance: ".1 miles")
 
+var GLOBAL_IS_OWNER = false
+
 // use this to call getNearbyEvents in other files
 var GLOBAL_AR_VIEW: ARView? = nil
 
@@ -54,13 +56,25 @@ class ARView: UIViewController, CLLocationManagerDelegate {
         //        getNearbyEvents(nil)
         sceneLocationView.run()
         self.addButtons()
+        self.authenticate()
     }
     
-    func authenticate() {
-        UIApplication.shared.keyWindow?.rootViewController?.present(SignInView(), animated: true, completion: nil)
+    func show_signIn() {
+        DispatchQueue.main.async {
+            UIApplication.shared.keyWindow?.rootViewController?.present(SignInView(), animated: true, completion: nil)
+        }
     }
-    func addButtons() {
-        self.authenticate()
+    
+    
+    func authenticate() {
+        EventStore.shared.authenticate() {
+            print(EventStore.shared.authenticated)
+            if (!EventStore.shared.authenticated){
+                self.show_signIn()
+            }
+        }
+    }
+    func addButtons()  {
         //******** CreateEvent Code Below:
         // add "+" button to create an event
         let buttonFactory = CreateEventsButton()
@@ -106,37 +120,43 @@ class ARView: UIViewController, CLLocationManagerDelegate {
     
     @objc func toggleMap(sender: UIButton!){
         sender.isEnabled = false
-                
+        
         let mapView = MapHomeView()
         let vc = UIHostingController(rootView: mapView)
         vc.modalPresentationStyle = .fullScreen
         show(vc, sender:self)
     }
     
-    @objc func createEventButtonTapped(sender: UIButton!){
-        // get CreateEvent.storyboard
-        let storyboard = UIStoryboard(name: "CreateEvent", bundle: nil)
-        // click on the storyboard file, click the correct view, and give it the same
-        // Storyboard ID as below
-        let vc = storyboard.instantiateViewController(
-            withIdentifier: "CreateEventStoryboardID") as! CreateEventView
+    
+    
+    @objc func createEventButtonTapped(sender: UIButton!) {
         
-        let navController = UINavigationController(rootViewController: vc)
-        
-        self.present(navController, animated: true, completion: nil)
-        
-        //this was the previous way I opened the CreateEventView
-        //this can be left blank for a swipe-closable modal
-        //vc.modalPresentationStyle = .fullScreen
-        //self.present(vc, animated: true, completion: nil)
-        
-        
-        // TODO: REMOVE & REPLACE
-        // locationArray.append(["42.298275", "-83.720859", "Smash Bros Tournament"])
-        
-        
-        getNearbyEvents(nil)
+        if (!EventStore.shared.authenticated) {
+            self.show_signIn()
+        }
+        else {
+            let storyboard = UIStoryboard(name: "CreateEvent", bundle: nil)
+            // click on the storyboard file, click the correct view, and give it the same
+            // Storyboard ID as below
+            let vc = storyboard.instantiateViewController(
+                withIdentifier: "CreateEventStoryboardID") as! CreateEventView
+            
+            let navController = UINavigationController(rootViewController: vc)
+            
+            self.present(navController, animated: true, completion: nil)
+            
+            //this was the previous way I opened the CreateEventView
+            //this can be left blank for a swipe-closable modal
+            //vc.modalPresentationStyle = .fullScreen
+            //self.present(vc, animated: true, completion: nil)
+            
+            
+            // TODO: REMOVE & REPLACE
+            // locationArray.append(["42.298275", "-83.720859", "Smash Bros Tournament"])
+            self.getNearbyEvents(nil)
+        }
     }
+    // get CreateEvent.storyboard
     
     
     override func viewDidLayoutSubviews() {
@@ -231,24 +251,23 @@ class ARView: UIViewController, CLLocationManagerDelegate {
     
     // runs when a event popup is tapped
     // runs when a event popup is tapped
-        func handleEventPopupTapped(eventID: String) {
-            
-            let locManager = CLLocationManager()
-            locManager.requestWhenInUseAuthorization()
-            
-            if (CLLocationManager.authorizationStatus() == CLAuthorizationStatus.authorizedWhenInUse
-                || CLLocationManager.authorizationStatus() == CLAuthorizationStatus.authorizedAlways
-            )
-            {
-                guard let currentLocation = locManager.location else {
-                    print("Error: ARView:getNearbyEvents - Unable to acquire user's location!")
-                    return
-                }
+    func handleEventPopupTapped(eventID: String) {
+        
+        let locManager = CLLocationManager()
+        locManager.requestWhenInUseAuthorization()
+        
+        if (CLLocationManager.authorizationStatus() == CLAuthorizationStatus.authorizedWhenInUse
+            || CLLocationManager.authorizationStatus() == CLAuthorizationStatus.authorizedAlways
+        )
+        {
+            guard let currentLocation = locManager.location else {
+                print("Error: ARView:getNearbyEvents - Unable to acquire user's location!")
+                return
+            }
             let lat =  String(currentLocation.coordinate.latitude)
             let lon =  String(currentLocation.coordinate.longitude)
             // get event's full info
             let getURL = "https://54.175.206.175/events/" + eventID + "?lat=" + lat + "&lon=" + lon
-                print(getURL)
             AF.request(getURL, method: .get).response { res in
                 //let resData = String(data: res.data!, encoding: String.Encoding.utf8)!
                 if let json = try? JSON(data: res.data!) {
@@ -266,28 +285,30 @@ class ARView: UIViewController, CLLocationManagerDelegate {
                         description: eventEntry[7].stringValue,
                         distance: eventEntry[9].stringValue
                     )
-
+                    
+                    GLOBAL_IS_OWNER = json["is_owner"].boolValue
+                    
                     // now, launch the event info modal, filled with info about the global event
                     let storyboard = UIStoryboard(name: "EventInfoView", bundle: nil)
                     let vc = storyboard.instantiateViewController(withIdentifier: "EventInfoViewStoryboardID") as! EventInfoView
-
+                    
                     let navController = UINavigationController(rootViewController: vc)
-
+                    
                     // make modal half screen, comment this if statement out for full screen
                     // https://stackoverflow.com/a/67988976
                     if let pc =
                         navController.presentationController
-                            as? UISheetPresentationController {
-
+                        as? UISheetPresentationController {
+                        
                         pc.detents = [.medium()]
                     }
-
+                    
                     self.present(navController, animated: true, completion: nil)
                 }
             }
         }
-        }
     }
+}
 
 
 

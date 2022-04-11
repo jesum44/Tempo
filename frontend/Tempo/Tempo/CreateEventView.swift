@@ -149,7 +149,6 @@ struct FormView: View {
                                     options: JSONSerialization.WritingOptions.prettyPrinted)!
 
                                 let parameters: [String: String] = [
-                                    "user_id": "admin",
                                     "title": self.title,
                                     "description": self.description,
                                     "address": self.address,

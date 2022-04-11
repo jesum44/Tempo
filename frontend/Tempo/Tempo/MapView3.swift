@@ -47,7 +47,6 @@ struct MapView3: UIViewRepresentable {
         }
         
         func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
-            print("here")
             guard let annotation = view.annotation as? MyAnnotation else { return }
             
             
