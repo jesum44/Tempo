@@ -102,6 +102,9 @@ def events_detail(request, slug):
         if not event_data[8]:
             event_data[8] = ''
 
+        if 'lat' not in request.GET or 'lon' not in request.GET:
+            return HttpResponse(400)
+
         user_lat = float(request.GET.get('lat'))
 
         user_lon_str = request.GET.get('lon')
@@ -250,6 +253,10 @@ def events(request):
         return HttpResponse(status=201)
 
     elif request.method == 'GET':
+
+        if 'lat' not in request.GET or 'lon' not in request.GET or 'results' not in request.GET:
+            return HttpResponse(400)
+
         # Get nearby events
         start_lat = float(request.GET.get('lat'))
         start_lon = float(request.GET.get('lon'))
@@ -301,6 +308,10 @@ def score_lists(query_words: list, last_query: str, event_str: str):
 @csrf_exempt
 def search(request):
     if request.method == 'GET':
+
+        if 'lat' not in request.GET or 'lon' not in request.GET or 'q' not in request.GET:
+            return HttpResponse(400)
+
         # Get events based on location and search query
         start_lat = float(request.GET.get('lat'))
         start_lon = float(request.GET.get('lon'))
