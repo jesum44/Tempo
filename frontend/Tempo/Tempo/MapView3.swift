@@ -63,24 +63,62 @@ struct MapView3: UIViewRepresentable {
             
             mapView.setVisibleMapRect(mapView.visibleMapRect, animated: true)
             
-            GLOBAL_CURRENT_EVENT = cur_event
+            let locManager = CLLocationManager()
+            locManager.requestWhenInUseAuthorization()
             
-            let topVC = self.topMostController()
-            let uiStoryboard = UIStoryboard(name: "EventInfoView", bundle: nil)
+            if (CLLocationManager.authorizationStatus() == CLAuthorizationStatus.authorizedWhenInUse
+                || CLLocationManager.authorizationStatus() == CLAuthorizationStatus.authorizedAlways
+            )
+            {
+                guard let currentLocation = locManager.location else {
+                    print("Error: ARView:getNearbyEvents - Unable to acquire user's location!")
+                    return
+                }
+                let lat =  String(currentLocation.coordinate.latitude)
+                let lon =  String(currentLocation.coordinate.longitude)
+                // get event's full info
+                let getURL = "https://54.175.206.175/events/" + cur_event.event_id! + "?lat=" + lat + "&lon=" + lon
+                AF.request(getURL, method: .get).response { res in
+                    //let resData = String(data: res.data!, encoding: String.Encoding.utf8)!
+                    if let json = try? JSON(data: res.data!) {
+                        let eventEntry = json["event"].arrayValue
+                        // set global event to the one just tapped
+                        print(eventEntry)
+                        GLOBAL_CURRENT_EVENT = Event(
+                            event_id: eventEntry[0].stringValue,
+                            title: eventEntry[1].stringValue,
+                            address: eventEntry[2].stringValue,
+                            latitude: "\(eventEntry[3].stringValue)",
+                            longitude: "\(eventEntry[4].stringValue)",
+                            start_time: eventEntry[5].stringValue,
+                            end_time:  eventEntry[6].stringValue,
+                            description: eventEntry[7].stringValue,
+                            distance: eventEntry[10].stringValue
+                        )
+                        
+                        GLOBAL_IS_OWNER = json["is_owner"].boolValue
+                        
+            
+//            GLOBAL_CURRENT_EVENT = cur_event
+            
+                        let topVC = self.topMostController()
+                        let uiStoryboard = UIStoryboard(name: "EventInfoView", bundle: nil)
 
-            let vcToPresent = uiStoryboard.instantiateViewController(withIdentifier: "EventInfoViewStoryboardID") as! EventInfoView
-            
-            let navController = UINavigationController(rootViewController: vcToPresent)
-            
-            if let pc =
-                navController.presentationController
-                as? UISheetPresentationController {
-                
-                pc.detents = [.medium()]
-            }
+                        let vcToPresent = uiStoryboard.instantiateViewController(withIdentifier: "EventInfoViewStoryboardID") as! EventInfoView
+                        
+                        let navController = UINavigationController(rootViewController: vcToPresent)
+                        
+                        if let pc =
+                            navController.presentationController
+                            as? UISheetPresentationController {
+                            
+                            pc.detents = [.medium()]
+                        }
 
-            topVC.present(navController, animated:true, completion: nil)
-            
+                        topVC.present(navController, animated:true, completion: nil)
+                    }
+                }
+                        
             
 //            let getURL = "https://54.175.206.175/events/" + annotation.event_id!
 //
@@ -110,7 +148,7 @@ struct MapView3: UIViewRepresentable {
 //                    topVC.present(vcToPresent, animated:true, completion: nil)
 //
 //                }
-//            }
+            }
         }
     }
 }

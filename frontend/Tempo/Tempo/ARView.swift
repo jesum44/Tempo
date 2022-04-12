@@ -293,7 +293,7 @@ class ARView: UIViewController, CLLocationManagerDelegate {
                         start_time: eventEntry[5].stringValue,
                         end_time:  eventEntry[6].stringValue,
                         description: eventEntry[7].stringValue,
-                        distance: eventEntry[9].stringValue
+                        distance: eventEntry[10].stringValue
                     )
                     
                     GLOBAL_IS_OWNER = json["is_owner"].boolValue
