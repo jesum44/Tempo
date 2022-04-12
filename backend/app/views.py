@@ -28,6 +28,9 @@ from django.contrib.auth import authenticate, login, logout
 def login_view(request):
     if request.method == 'POST':
         json_data = json.loads(request.body)
+        if 'username' not in json_data or 'password' not in json_data:
+            return HttpResponse(status=400)
+
         username = json_data['username']
         password = json_data['password']
         user = authenticate(request, username=username, password=password)
@@ -51,6 +54,10 @@ def logout_view(request):
 def register(request):
     if request.method == 'POST':
         json_data = json.loads(request.body)
+
+        if 'username' not in json_data or 'password' not in json_data or 'email' not in json_data:
+            return HttpResponse(status=400)
+
         username = json_data['username']
         password = json_data['password']
         email = json_data['email']
