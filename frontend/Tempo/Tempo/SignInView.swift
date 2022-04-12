@@ -188,6 +188,7 @@ func register(username: String, password: String, email: String) async -> Bool {
     }
 
     // no errors, everything worked, return true
+    EventStore.shared.authenticated = true
     return true
 }
 
@@ -228,6 +229,7 @@ func login(username: String, password: String) async -> Bool {
     }
 
     // no errors, everything worked, return true
+    EventStore.shared.authenticated = true
     return true
 }
 
