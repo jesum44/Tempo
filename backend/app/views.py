@@ -36,12 +36,16 @@ def login_view(request):
             return HttpResponse(status=200)
         else:
             return HttpResponse(status=404)
+    else:
+        return HttpResponse(status=404)
 
 @csrf_exempt
 def logout_view(request):
     if request.method == 'POST':
         logout(request)
         return HttpResponse(status=200)
+    else:
+        return HttpResponse(status=404)
 
 @csrf_exempt
 def register(request):
@@ -56,6 +60,8 @@ def register(request):
         if user is not None:
             login(request, user)
         return HttpResponse(status=201)
+    else:
+        return HttpResponse(status=404)
 
 @csrf_exempt
 def check_auth(request):
