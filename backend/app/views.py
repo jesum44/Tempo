@@ -152,6 +152,9 @@ def events_detail(request, slug):
 
         json_data = json.loads(request.body)
 
+        if 'title' not in json_data or 'description' not in json_data or 'address' not in json_data:
+            return HttpResponse(status=400)
+
         title = json_data['title']
         description = json_data['description']
         address = json_data['address']
@@ -162,6 +165,9 @@ def events_detail(request, slug):
 
         lat = g.lat
         lon = g.lng
+
+        if 'start_time' not in json_data or 'end_time' not in json_data:
+            return HttpResponse(status=400)
 
         start_time = datetime.fromtimestamp(int(json_data['start_time']))
         end_time = datetime.fromtimestamp(int(json_data['end_time']))
@@ -198,18 +204,20 @@ def events_detail(request, slug):
         return HttpResponse(status=404)
 
 
-
 # TODO: remove csrf exempt decorator if we can figure out how
 @csrf_exempt
 def events(request):
     if request.method == 'POST':
         if not request.user.is_authenticated:
             return HttpResponse(status=401)
-
-        json_data = json.loads(request.body)
         
         user_id = request.user.username
         event_id = str(uuid.uuid4().int)
+
+        json_data = json.loads(request.body)
+        
+        if 'title' not in json_data or 'description' not in json_data or 'address' not in json_data:
+            return HttpResponse(status=400)
 
         title = json_data['title']
         description = json_data['description']
@@ -221,6 +229,9 @@ def events(request):
 
         lat = g.lat
         lon = g.lng
+
+        if 'start_time' not in json_data or 'end_time' not in json_data:
+            return HttpResponse(status=400)
 
         start_time = datetime.fromtimestamp(int(json_data['start_time']))
         end_time = datetime.fromtimestamp(int(json_data['end_time']))
