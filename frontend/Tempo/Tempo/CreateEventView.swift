@@ -207,7 +207,7 @@ class SheetDismisserProtocol: ObservableObject {
 func makeCreateEventPostRequest(_ parameters: [String: String]) async -> [String] {
     // TODO: replace this with what the backend team provides
     //let url = "https://ptsv2.com/t/13soj-1647428183/post"
-    let url = "https://54.175.206.175/events/"
+    let url = "https://54.87.128.240/events/"
     
     guard let encoded = try? JSONEncoder().encode(parameters) else {
         print("JSONEncoder error")

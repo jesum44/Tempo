@@ -88,7 +88,7 @@ struct SwiftUIEditEventView: View {
 
 func EditEvent(eventID: String, delegate: SheetDismisserProtocol) {
     // delete event from database with DELETE http request
-    let url = "https://54.175.206.175/events/" + eventID + "/"
+    let url = "https://54.87.128.240/events/" + eventID + "/"
     AF.request(url, method: .delete).response { res in
         debugPrint(res)
     }
@@ -115,7 +115,7 @@ func toDate(isoDate: String)-> Date?{
 
 func editEventPutRequest(_ parameters: [String: String], eventId: String) async -> [String] {
     
-    let url = "https://54.175.206.175/events/" + eventId + "/"
+    let url = "https://54.87.128.240/events/" + eventId + "/"
     guard let encoded = try? JSONEncoder().encode(parameters) else {
         print("JSONEncoder error")
         return ["Json Encoding"]

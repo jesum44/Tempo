@@ -165,7 +165,7 @@ func register(username: String, password: String, email: String) async -> Bool {
         return false
     }
             
-    guard let apiUrl = URL(string: "https://54.175.206.175/accounts/register/") else {
+    guard let apiUrl = URL(string: "https://54.87.128.240/accounts/register/") else {
         print("register: Bad URL")
         return false
     }
@@ -206,7 +206,7 @@ func login(username: String, password: String) async -> Bool {
         return false
     }
             
-    guard let apiUrl = URL(string: "https://54.175.206.175/accounts/login/") else {
+    guard let apiUrl = URL(string: "https://54.87.128.240/accounts/login/") else {
         print("register: Bad URL")
         return false
     }

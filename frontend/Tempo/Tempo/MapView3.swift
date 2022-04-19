@@ -77,7 +77,7 @@ struct MapView3: UIViewRepresentable {
                 let lat =  String(currentLocation.coordinate.latitude)
                 let lon =  String(currentLocation.coordinate.longitude)
                 // get event's full info
-                let getURL = "https://54.175.206.175/events/" + cur_event.event_id! + "?lat=" + lat + "&lon=" + lon
+                let getURL = "https://54.87.128.240/events/" + cur_event.event_id! + "?lat=" + lat + "&lon=" + lon
                 AF.request(getURL, method: .get).response { res in
                     //let resData = String(data: res.data!, encoding: String.Encoding.utf8)!
                     if let json = try? JSON(data: res.data!) {
@@ -120,7 +120,7 @@ struct MapView3: UIViewRepresentable {
                 }
                         
             
-//            let getURL = "https://54.175.206.175/events/" + annotation.event_id!
+//            let getURL = "https://54.87.128.240/events/" + annotation.event_id!
 //
 //            AF.request(getURL, method: .get).response { res in
 //                if let json = try? JSON(data: res.data!) {
